@@ -1,18 +1,14 @@
 import { ref, Ref, watch } from 'vue';
 
-export interface IMap {
-    setPaintProperty(id: string, prop: string, val: any): void;
-    setLayoutProperty(id: string, prop: string, val: any): void;
-}
-
-export class LayerProxy<TMap extends IMap, TLayer> {
+export class LayerProxy<TLayer>{
     private readonly proxy: Ref<TLayer>;
 
     /**
      *
      */
-    constructor(map: TMap, layer: TLayer) {
+    constructor(map: mapboxgl.Map, layer: TLayer) {
         const l = layer as any;
+        
         if (!l['paint']) l['paint'] = {};
         if (!l['layout']) l['layout'] = {};
 

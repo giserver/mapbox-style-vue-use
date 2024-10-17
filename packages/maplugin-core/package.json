@@ -17,5 +17,13 @@
   },
   "scripts": {
     "build": "vite build --config ../../configs/vite.config.ts"
+  },
+  "dependencies": {
+    "@turf/center": "^7.1.0",
+    "proj4": "^2.12.1"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.14",
+    "@types/proj4": "^2.5.5"
   }
 }

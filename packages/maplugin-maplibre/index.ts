@@ -3,19 +3,25 @@ import { LayerProxy } from '../maplugin-core';
 
 declare module 'maplibre-gl' {
     interface Map {
-        getLayerProxy(id: string): LayerProxy<maplibregl.Map, maplibregl.LayerSpecification>;
+        getLayerProxy<T extends maplibregl.LayerSpecification>(id: string): LayerProxy<T>;
     }
 }
 
 const _addLayer = maplibregl.Map.prototype.addLayer;
-maplibregl.Map.prototype.addLayer = function (layer: maplibregl.LayerSpecification, before?: string) {
-    const proxy = new LayerProxy(this, layer);
-    if(!(this as any)["_layerProxies"]) (this as any)["_layerProxies"] = {};
-    (this as any)["_layerProxies"][layer.id] = proxy;
-    
+maplibregl.Map.prototype.addLayer = function (layer: maplibregl.AddLayerObject, before?: string) {
+    if (layer.type !== 'custom') {
+        const proxy = new LayerProxy(this as any, layer);
+        
+        if (!(this as any)["_layerProxies"]) 
+            (this as any)["_layerProxies"] = {};
+        
+        (this as any)["_layerProxies"][layer.id] = proxy;
+    }
+
+
     return _addLayer.call(this, layer, before);
 }
 
-maplibregl.Map.prototype.getLayerProxy = function (id: string) {
-    return (this as any)["_layerProxies"][id];
+maplibregl.Map.prototype.getLayerProxy = function <T extends maplibregl.LayerSpecification>(id: string) {
+    return (this as any)["_layerProxies"][id] as LayerProxy<T>;
 }

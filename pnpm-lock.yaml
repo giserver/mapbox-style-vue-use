@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@types/mapbox-gl':
+        specifier: ^3.4.0
+        version: 3.4.0
       '@vitejs/plugin-vue':
         specifier: ^5.1.4
         version: 5.1.4(vite@5.4.9)(vue@3.5.12(typescript@5.6.3))
@@ -24,7 +27,21 @@ importers:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
 
-  packages/maplugin-core: {}
+  packages/maplugin-core:
+    dependencies:
+      '@turf/center':
+        specifier: ^7.1.0
+        version: 7.1.0
+      proj4:
+        specifier: ^2.12.1
+        version: 2.12.1
+    devDependencies:
+      '@types/geojson':
+        specifier: ^7946.0.14
+        version: 7946.0.14
+      '@types/proj4':
+        specifier: ^2.5.5
+        version: 2.5.5
 
   packages/maplugin-mapbox:
     dependencies:
@@ -370,6 +387,18 @@ packages:
   '@rushstack/ts-command-line@4.22.6':
     resolution: {integrity: sha512-QSRqHT/IfoC5nk9zn6+fgyqOPXHME0BfchII9EUPR19pocsNp/xSbeBCbD3PIR2Lg+Q5qk7OFqk1VhWPMdKHJg==}
 
+  '@turf/bbox@7.1.0':
+    resolution: {integrity: sha512-PdWPz9tW86PD78vSZj2fiRaB8JhUHy6piSa/QXb83lucxPK+HTAdzlDQMTKj5okRCU8Ox/25IR2ep9T8NdopRA==}
+
+  '@turf/center@7.1.0':
+    resolution: {integrity: sha512-p9AvBMwNZmRg65kU27cGKHAUQnEcdz8Y7f/i5DvaMfm4e8zmawr+hzPKXaUpUfiTyLs8Xt2W9vlOmNGyH+6X3w==}
+
+  '@turf/helpers@7.1.0':
+    resolution: {integrity: sha512-dTeILEUVeNbaEeoZUOhxH5auv7WWlOShbx7QSd4s0T4Z0/iz90z9yaVCtZOLbU89umKotwKaJQltBNO9CzVgaQ==}
+
+  '@turf/meta@7.1.0':
+    resolution: {integrity: sha512-ZgGpWWiKz797Fe8lfRj7HKCkGR+nSJ/5aKXMyofCvLSc2PuYJs/qyyifDPWjASQQCzseJ7AlF2Pc/XQ/3XkkuA==}
+
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
 
@@ -382,6 +411,9 @@ packages:
   '@types/geojson@7946.0.14':
     resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
 
+  '@types/mapbox-gl@3.4.0':
+    resolution: {integrity: sha512-tbn++Mm94H1kE7W6FF0oVC9rMXHVzDDNUbS7KfBMRF8NV/8csFi+67ytKcZJ4LsrpsJ+8MC6Os6ZinEDCsrunw==}
+
   '@types/mapbox__point-geometry@0.1.4':
     resolution: {integrity: sha512-mUWlSxAmYLfwnRBmgYV86tgYmMIICX4kza8YnE/eIlywGe2XoOxlpVnXWwir92xRLjwyarqwpu2EJKD2pk0IUA==}
 
@@ -390,6 +422,9 @@ packages:
 
   '@types/pbf@3.0.5':
     resolution: {integrity: sha512-j3pOPiEcWZ34R6a6mN07mUkM4o4Lwf6hPNt8eilOeZhTFbxFXmKhvXl9Y28jotFPaI1bpPDJsbCprUoNke6OrA==}
+
+  '@types/proj4@2.5.5':
+    resolution: {integrity: sha512-y4tHUVVoMEOm2nxRLQ2/ET8upj/pBmoutGxFw2LZJTQWPgWXI+cbxVEUFFmIzr/bpFR83hGDOTSXX6HBeObvZA==}
 
   '@types/supercluster@7.1.3':
     resolution: {integrity: sha512-Z0pOY34GDFl3Q6hUFYf3HkTwKEE02e7QgtJppBt+beEAxnyOpJua+voGFvxINBHa06GwLFFym7gRPY2SiKIfIA==}
@@ -646,6 +681,9 @@ packages:
     resolution: {integrity: sha512-lgL7XpIwsgICiL82ITplfS7IGwrB1OJIw/pCvprDp2dhmSSEBgmPzYRvwYYYvJGJD7fxUv1Tvpih4nZ6VrLuaA==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
+  mgrs@1.0.0:
+    resolution: {integrity: sha512-awNbTOqCxK1DBGjalK3xqWIstBZgN6fxsMSiXLs9/spqWkF2pAhb2rrYCFSsr1/tT7PhcDGjZndG8SWYn0byYA==}
+
   minimatch@3.0.8:
     resolution: {integrity: sha512-6FsRAQsxQ61mw+qP1ZzbL9Bc78x2p5OqNgNpnoAFLTrX8n5Kxph0CsnhmKKNXTWjXqU5L0pGPR7hYk+XWZr60Q==}
 
@@ -702,6 +740,9 @@ packages:
 
   potpack@2.0.0:
     resolution: {integrity: sha512-Q+/tYsFU9r7xoOJ+y/ZTtdVQwTWfzjbiXBDMM/JKUux3+QPP02iUuIoeBQ+Ot6oEDlC+/PGjB/5A3K7KKb7hcw==}
+
+  proj4@2.12.1:
+    resolution: {integrity: sha512-vmhP3hmstjXjzFwg8QXJwpoj4n7GVrXk3ZW3DzNK/Ur4cuwXq7ZiMXaWYvLYLQbX8n4MXgbwTr4lthOUZltBpA==}
 
   protocol-buffers-schema@3.6.0:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}
@@ -780,6 +821,9 @@ packages:
   to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
+
+  tslib@2.8.0:
+    resolution: {integrity: sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==}
 
   typescript@5.4.2:
     resolution: {integrity: sha512-+2/g0Fds1ERlP6JsakQQDXjZdZMM+rqpamFZJEKh4kwTIn3iDkgKtby0CeNd5ATNZ4Ry1ax15TMx0W2V+miizQ==}
@@ -860,6 +904,9 @@ packages:
     resolution: {integrity: sha512-GlaYyEb07DPxYCKhKzplCWBJtvxZcZMrL+4UkrTSJHHPyZU4mYYTv3qaOe77H7EODLSSopAUFAc6W8U4yqvscg==}
     engines: {node: ^16.13.0 || >=18.0.0}
     hasBin: true
+
+  wkt-parser@1.3.3:
+    resolution: {integrity: sha512-ZnV3yH8/k58ZPACOXeiHaMuXIiaTk1t0hSUVisbO0t4RjA5wPpUytcxeyiN2h+LZRrmuHIh/1UlrR9e7DHDvTw==}
 
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
@@ -1103,6 +1150,30 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
+  '@turf/bbox@7.1.0':
+    dependencies:
+      '@turf/helpers': 7.1.0
+      '@turf/meta': 7.1.0
+      '@types/geojson': 7946.0.14
+      tslib: 2.8.0
+
+  '@turf/center@7.1.0':
+    dependencies:
+      '@turf/bbox': 7.1.0
+      '@turf/helpers': 7.1.0
+      '@types/geojson': 7946.0.14
+      tslib: 2.8.0
+
+  '@turf/helpers@7.1.0':
+    dependencies:
+      '@types/geojson': 7946.0.14
+      tslib: 2.8.0
+
+  '@turf/meta@7.1.0':
+    dependencies:
+      '@turf/helpers': 7.1.0
+      '@types/geojson': 7946.0.14
+
   '@types/argparse@1.0.38': {}
 
   '@types/estree@1.0.6': {}
@@ -1113,6 +1184,10 @@ snapshots:
 
   '@types/geojson@7946.0.14': {}
 
+  '@types/mapbox-gl@3.4.0':
+    dependencies:
+      '@types/geojson': 7946.0.14
+
   '@types/mapbox__point-geometry@0.1.4': {}
 
   '@types/mapbox__vector-tile@1.3.4':
@@ -1122,6 +1197,8 @@ snapshots:
       '@types/pbf': 3.0.5
 
   '@types/pbf@3.0.5': {}
+
+  '@types/proj4@2.5.5': {}
 
   '@types/supercluster@7.1.3':
     dependencies:
@@ -1447,6 +1524,8 @@ snapshots:
       tinyqueue: 3.0.0
       vt-pbf: 3.1.3
 
+  mgrs@1.0.0: {}
+
   minimatch@3.0.8:
     dependencies:
       brace-expansion: 1.1.11
@@ -1500,6 +1579,11 @@ snapshots:
       source-map-js: 1.2.1
 
   potpack@2.0.0: {}
+
+  proj4@2.12.1:
+    dependencies:
+      mgrs: 1.0.0
+      wkt-parser: 1.3.3
 
   protocol-buffers-schema@3.6.0: {}
 
@@ -1575,6 +1659,8 @@ snapshots:
 
   to-fast-properties@2.0.0: {}
 
+  tslib@2.8.0: {}
+
   typescript@5.4.2: {}
 
   typescript@5.6.3: {}
@@ -1635,5 +1721,7 @@ snapshots:
   which@4.0.0:
     dependencies:
       isexe: 3.1.1
+
+  wkt-parser@1.3.3: {}
 
   yallist@4.0.0: {}

@@ -1,21 +1,31 @@
 import mapboxgl from 'mapbox-gl';
 import { LayerProxy } from '../maplugin-core';
 
+type AnyLayerSource = {
+	source?: mapboxgl.LayerSpecification["source"] | mapboxgl.SourceSpecification;
+};
+type TAnyLayer = Omit<mapboxgl.LayerSpecification, "source"> & AnyLayerSource | mapboxgl.CustomLayerInterface;
+
 declare module 'mapbox-gl' {
     interface Map {
-        getLayerProxy(id: string): LayerProxy<Map, mapboxgl.LayerSpecification>;
+        getLayerProxy<T extends mapboxgl.LayerSpecification>(id: string): LayerProxy<mapboxgl.LayerSpecification>;
     }
 }
 
 const _addLayer = mapboxgl.Map.prototype.addLayer;
-mapboxgl.Map.prototype.addLayer = function (layer: mapboxgl.LayerSpecification, before?: string) {
-    const proxy = new LayerProxy(this, layer);
-    if(!(this as any)["_layerProxies"]) (this as any)["_layerProxies"] = {};
-    (this as any)["_layerProxies"][layer.id] = proxy;
-    
+mapboxgl.Map.prototype.addLayer = function (layer: TAnyLayer, before?: string) {
+    if(layer.type !== 'custom'){
+        const proxy = new LayerProxy(this, layer as any);
+        
+        if(!(this as any)["_layerProxies"]) 
+            (this as any)["_layerProxies"] = {};
+        
+        (this as any)["_layerProxies"][layer.id] = proxy;
+    }
+
     return _addLayer.call(this, layer, before);
 }
 
-mapboxgl.Map.prototype.getLayerProxy = function (id: string) {
-    return (this as any)["_layerProxies"][id];
+mapboxgl.Map.prototype.getLayerProxy = function<T extends mapboxgl.LayerSpecification> (id: string) {
+    return (this as any)["_layerProxies"][id] as LayerProxy<T>;
 }

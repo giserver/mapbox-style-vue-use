@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: 'index.ts',
-      name: 'MSVU',
+      name: 'maplugin',
       fileName: 'index',
     },
   },

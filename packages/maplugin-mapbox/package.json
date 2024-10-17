@@ -1,0 +1,26 @@
+{
+  "name": "@maplugin/mapbox",
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.umd.cjs"
+  },
+  "scripts": {
+    "build": "vite build --config ../../configs/vite.config.ts"
+  },
+  "dependencies": {
+    "@maplugin/core": "workspace:^"
+  },
+  "devDependencies": {
+    "mapbox-gl": "^3.7.0"
+  }
+}

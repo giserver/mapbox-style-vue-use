@@ -18,15 +18,15 @@ export class LayerProxy<TMap extends IMap, TLayer> {
 
         this.proxy = ref(layer) as any;
 
-        watch(() => (this.proxy.value as any)['paint'], a => {
+        watch(() => (this.proxy.value as any)['paint'], (a: { [x: string]: any; }) => {
             for (let p in a) {
-                map.setPaintProperty((this.proxy.value as any)['id'], p, a['p']);
+                map.setPaintProperty((this.proxy.value as any)['id'], p, a[p]);
             }
         }, { deep: true });
 
-        watch(() => (this.proxy.value as any)['layout'], a => {
+        watch(() => (this.proxy.value as any)['layout'], (a: { [x: string]: any; }) => {
             for (let p in a) {
-                map.setLayoutProperty((this.proxy.value as any)['id'], p, a['p']);
+                map.setLayoutProperty((this.proxy.value as any)['id'], p, a[p]);
             }
         }, { deep: true });
     }

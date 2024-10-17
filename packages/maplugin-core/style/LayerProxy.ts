@@ -3,9 +3,6 @@ import { ref, Ref, watch } from 'vue';
 export class LayerProxy<TLayer>{
     private readonly proxy: Ref<TLayer>;
 
-    /**
-     *
-     */
     constructor(map: mapboxgl.Map, layer: TLayer) {
         const l = layer as any;
         

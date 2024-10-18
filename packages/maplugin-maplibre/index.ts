@@ -10,7 +10,7 @@ declare module 'maplibre-gl' {
 const _addLayer = maplibregl.Map.prototype.addLayer;
 maplibregl.Map.prototype.addLayer = function (layer: maplibregl.AddLayerObject, before?: string) {
     if (layer.type !== 'custom') {
-        const proxy = new LayerProxy(this as any, layer);
+        const proxy = new LayerProxy(this, layer);
         
         if (!(this as any)["_layerProxies"]) 
             (this as any)["_layerProxies"] = {};

@@ -19,6 +19,7 @@
     "build": "vite build --config ../../configs/vite.config.ts"
   },
   "dependencies": {
+    "@turf/boolean-clockwise": "^7.1.0",
     "@turf/center": "^7.1.0",
     "proj4": "^2.12.1"
   },

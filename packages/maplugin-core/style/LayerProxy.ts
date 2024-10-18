@@ -3,7 +3,7 @@ import { ref, Ref, watch } from 'vue';
 export class LayerProxy<TLayer>{
     private readonly proxy: Ref<TLayer>;
 
-    constructor(map: mapboxgl.Map, layer: TLayer) {
+    constructor(map: any, layer: TLayer) {
         const l = layer as any;
         
         if (!l['paint']) l['paint'] = {};

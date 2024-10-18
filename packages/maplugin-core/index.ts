@@ -1,1 +1,1 @@
-export * from './style/LayerProxy';
+export * from './style/layerProxy';

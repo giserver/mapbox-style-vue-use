@@ -54,7 +54,7 @@ export namespace Units {
             default: throw unsupportUnitsError(units);
         }
     }
-    
+
     /**
      * 长度基础单位(米)，转换到对应长度单位
      * @param value 长度 单位米
@@ -133,7 +133,7 @@ export namespace Units {
     export function convertAngle(value: number, fromUnits: TUnitsAngle, toUnits: TUnitsAngle): number {
         return angleBaseTo(angleToBase(value, fromUnits), toUnits);
     }
-    
+
     /**
      * 角度单位类型转换到单位符号
      * @param type 
@@ -168,51 +168,53 @@ export namespace Units {
             label: "亩",
             value: "MU"
         }];
+
+
+
+    /**
+     * 单位转换器hook
+     * @param converter 转换函数 
+     * @param value 初始化数据
+     * @param units 初始化单位
+     * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
+     * @returns 
+     */
+    function createUseUnits<TUnits>(converter: (value: number, fromUnits: TUnits, toUnits: TUnits) => number, value: number, units: TUnits, valueUnits?: TUnits) {
+        if (valueUnits)
+            value = converter(value, valueUnits, units);
+
+        const valueRef = ref(value);
+        const unitsRef = ref(units);
+
+        watch(unitsRef, (a, b) => {
+            valueRef.value = converter(valueRef.value, b as any, a as any);
+        });
+
+        return { valueRef, unitsRef }
+    }
+
+    /**
+     * 面积 hook
+     * @param value 初始化数据
+     * @param units 初始化单位
+     * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
+     * @returns 
+     */
+    export function useAreaUnits(value: number, units: Units.TUnitsArea, valueUnits?: Units.TUnitsArea) {
+        const vu = createUseUnits(Units.convertArea, value, units, valueUnits);
+        return { ...vu, unitsDescriptions: Units.unitsAreaDescriptions };
+    }
+
+    /**
+     * 长度 hook
+     * @param value 初始化数据
+     * @param units 初始化单位
+     * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
+     * @returns 
+     */
+    export function useLengthUnits(value: number, units: Units.TUnitsLength, valueUnits?: Units.TUnitsLength) {
+        const vu = createUseUnits(Units.convertLength, value, units, valueUnits);
+        return { ...vu, unitsDescriptions: Units.unitsLengthDescriptions };
+    }
 }
 
-
-/**
- * 单位转换器hook
- * @param converter 转换函数 
- * @param value 初始化数据
- * @param units 初始化单位
- * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
- * @returns 
- */
-function createUseUnits<TUnits>(converter: (value: number, fromUnits: TUnits, toUnits: TUnits) => number, value: number, units: TUnits, valueUnits?: TUnits) {
-    if (valueUnits)
-        value = converter(value, valueUnits, units);
-
-    const valueRef = ref(value);
-    const unitsRef = ref(units);
-
-    watch(unitsRef, (a, b) => {
-        valueRef.value = converter(valueRef.value, b as any, a as any);
-    });
-
-    return { valueRef, unitsRef }
-}
-
-/**
- * 面积 hook
- * @param value 初始化数据
- * @param units 初始化单位
- * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
- * @returns 
- */
-export function useAreaUnits(value: number, units: Units.TUnitsArea, valueUnits?: Units.TUnitsArea) {
-    const vu = createUseUnits(Units.convertArea, value, units, valueUnits);
-    return { ...vu, unitsDescriptions: Units.unitsAreaDescriptions };
-}
-
-/**
- * 长度 hook
- * @param value 初始化数据
- * @param units 初始化单位
- * @param valueUnits 初始化数据的单位，当value和units不一致时指定value的单位
- * @returns 
- */
-export function useLengthUnits(value: number, units: Units.TUnitsLength, valueUnits?: Units.TUnitsLength) {
-    const vu = createUseUnits(Units.convertLength, value, units, valueUnits);
-    return { ...vu, unitsDescriptions: Units.unitsLengthDescriptions };
-}

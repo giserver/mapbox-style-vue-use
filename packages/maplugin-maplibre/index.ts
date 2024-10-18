@@ -1,6 +1,8 @@
 import maplibregl from 'maplibre-gl';
 import { LayerProxy } from '../maplugin-core';
 
+export * from './geoJSONlayerManager';
+
 declare module 'maplibre-gl' {
     interface Map {
         getLayerProxy<T extends maplibregl.LayerSpecification>(id: string): LayerProxy<T>;

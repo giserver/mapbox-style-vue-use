@@ -1,1 +1,3 @@
-export * from './style/layerProxy';
+export * from './managers';
+export * from './style';
+export * from './utils';

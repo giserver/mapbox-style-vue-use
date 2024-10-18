@@ -14,7 +14,7 @@ type TMeasureUnits = {
 interface MeasureOptions extends EditorOptions {
 }
 
-export class MeasureContext extends EditorManager {
+export class MeasureManager extends EditorManager {
     /**
      * 测量id
      * 

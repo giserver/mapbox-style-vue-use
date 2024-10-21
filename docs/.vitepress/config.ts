@@ -20,12 +20,17 @@ export default {
         sidebar: [
             {
                 text: "maplibre",
-                base: "/sidebar/maplibre",
+                base: "/sidebar/maplibre/",
                 items: [
                     { text: '简介', link: "/" },
                     {
                         text: "功能", items: [
-                            {text : "测量" , link : "/measure"}
+                            { text: "测量", link: "/measure" },
+                            {
+                                text: "样式", items: [
+                                    {text : "zoom 插值" ,link : "/style/zoomInterpolate"}
+                                ]
+                            }
                         ]
                     }
                 ]

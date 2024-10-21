@@ -1,4 +1,4 @@
-import { GeoJSONLayerManager as GeoJSONLayerManagerBase, TFeatureEvent, TIdentityGeoJSONFeature } from '@maplugin/core';
+import { GeoJSONLayerManager as GeoJSONLayerManagerBase, TFeatureEvent, TIdentityGeoJSONFeature } from '@maplugin-vue/core';
 
 export class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature>
     extends GeoJSONLayerManagerBase<TFeature> {

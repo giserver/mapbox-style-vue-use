@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import Map from './Map.vue';
 import {GeoJSONLayerManager} from '../geoJSONlayerManager';
-import {MeasureManager} from '@maplugin/core';
+import {MeasureManager} from '@maplugin-vue/core';
 
 let measure : MeasureManager;
 

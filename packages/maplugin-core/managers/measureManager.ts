@@ -64,7 +64,7 @@ export class MeasureManager extends EditorManager {
     constructor(glManager: GeoJSONLayerManager, options: MeasureOptions) {
 
         super(glManager, options);
-        glManager.on('all', this.renderMeasure);
+        glManager.on('all', () => this.renderMeasure());
 
         glManager.addLayer(this.id_layer_measure_symbol);
         glManager.addLayer(this.id_layer_polygon_clockwise);
@@ -222,7 +222,7 @@ export class MeasureManager extends EditorManager {
             val ? undefined : ['!', ['boolean', ['get', 'center'], false]]);
     }
 
-    clear(){
+    clear() {
         super.clear();
         this.customFeatures = [];
         this.renderMeasure();

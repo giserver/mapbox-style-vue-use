@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm -r --filter=./packages/* run build"
+    "build": "pnpm -r --filter=./packages/* run build",
+    "dev": "pnpm build & pnpm docs:dev",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +18,7 @@
     "typescript": "^5.6.3",
     "vite": "^5.4.8",
     "vite-plugin-dts": "^4.2.4",
+    "vitepress": "^1.4.1",
     "vue": "^3.5.12"
   }
 }

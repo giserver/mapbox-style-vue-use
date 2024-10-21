@@ -1,5 +1,5 @@
 {
-  "name": "@maplugin/core",
+  "name": "@maplugin-vue/core",
   "private": true,
   "version": "1.0.0",
   "type": "module",

@@ -1,5 +1,5 @@
 {
-  "name": "@maplugin/mapbox",
+  "name": "@maplugin-vue/mapbox",
   "version": "1.0.0",
   "type": "module",
   "files": [
@@ -18,7 +18,7 @@
     "build": "vite build --config ../../configs/vite.config.ts"
   },
   "dependencies": {
-    "@maplugin/core": "workspace:^"
+    "@maplugin-vue/core": "workspace:^"
   },
   "devDependencies": {
     "mapbox-gl": "^3.7.0"

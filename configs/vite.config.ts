@@ -10,7 +10,7 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions:{
-      external: ['vue', 'maplibre-gl', 'mapbox-gl', '@turf/center', 'proj4']
+      external: ['vue', 'maplibre-gl', 'mapbox-gl', '@turf/center', 'proj4', '@maplugin-vue/core']
     }
   },
   plugins: [vue(), dts()]

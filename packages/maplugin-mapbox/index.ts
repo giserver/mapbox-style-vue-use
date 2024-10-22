@@ -1,7 +1,7 @@
 import mapboxgl from 'mapbox-gl';
 import { LayerProxy } from '@maplugin-vue/core';
 
-export * from './geoJSONlayerManager';
+export * from './GeoJSONlayerManager';
 
 type AnyLayerSource = {
 	source?: mapboxgl.LayerSpecification["source"] | mapboxgl.SourceSpecification;

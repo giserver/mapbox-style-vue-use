@@ -1,10 +1,11 @@
+import { IMap } from "../types";
 import { Tools } from "../utils/tools";
 
 export type TFeatureEvent = "all" | "create" | "update" | "delete" | "clear" | "destory";
 export type TIdentityGeoJSONFeature = GeoJSON.Feature<GeoJSON.Geometry, { id: string }>;
 
 export interface GeoJSONLayerManagerOptions<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
-    map: any;
+    map: IMap;
     data: Array<TFeature>;
 }
 
@@ -13,7 +14,7 @@ export abstract class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeatu
     protected readonly layers = new Array<string>();
     protected data = new Map<string, TFeature>();
 
-    readonly map: any;
+    readonly map: IMap;
     readonly source: string = Tools.uuid();
 
     /**
@@ -152,7 +153,7 @@ export abstract class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeatu
      * 此类 create update delete clear 方法使用onChange去执行更新
      */
     reRender() {
-        ((this.map as any).getSource(this.source) as any).setData(this.fc);
+        (this.map.getSource(this.source) as any).setData(this.fc);
     }
 
     private triggerEvents(mode: TFeatureEvent, features: TFeature[]) {

@@ -1,9 +1,10 @@
 import { ref, Ref, watch } from 'vue';
+import { IMap } from '../types';
 
 export class LayerProxy<TLayer>{
     private readonly proxy: Ref<TLayer>;
 
-    constructor(map: any, layer: TLayer) {
+    constructor(map: IMap, layer: TLayer) {
         const l = layer as any;
         
         if (!l['paint']) l['paint'] = {};

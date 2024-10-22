@@ -1,9 +1,9 @@
 import booleanClockwise from '@turf/boolean-clockwise';
-import { EditorManager, EditorOptions } from './editorManager';
+import { EditorManager, EditorOptions } from './EditorManager';
 import { Units } from '../utils/units';
 import { Measurement } from '../utils/measurement';
 import { Tools } from '../utils/tools';
-import { GeoJSONLayerManager, TIdentityGeoJSONFeature } from './geoJSONLayerManager';
+import { GeoJSONLayerManager, TIdentityGeoJSONFeature } from './GeoJSONLayerManager';
 
 
 type TMeasureUnits = {

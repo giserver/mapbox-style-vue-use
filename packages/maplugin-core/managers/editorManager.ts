@@ -1,5 +1,5 @@
 import { Tools } from "../utils/tools";
-import { GeoJSONLayerManager } from "./geoJSONLayerManager";
+import { GeoJSONLayerManager } from "./GeoJSONLayerManager";
 
 /**
  * 图层图形类型

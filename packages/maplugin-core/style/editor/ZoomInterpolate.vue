@@ -54,13 +54,14 @@
 
 <script setup lang="ts" generic="T">
 import { reactive, ref, watch } from 'vue';
+import { IMap } from '../../types';
 
 type TMark = {
     [K in keyof T]: any
 }
 
 const props = withDefaults(defineProps<{
-    map: any,
+    map: IMap,
     value: Partial<T>,
     configs: {
         [K in keyof T]: {

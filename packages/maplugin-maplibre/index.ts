@@ -1,7 +1,7 @@
 import maplibregl from 'maplibre-gl';
 import { LayerProxy } from '../maplugin-core';
 
-export * from './geoJSONlayerManager';
+export * from './GeoJSONlayerManager';
 
 declare module 'maplibre-gl' {
     interface Map {

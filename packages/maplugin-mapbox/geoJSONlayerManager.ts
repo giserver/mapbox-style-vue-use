@@ -13,7 +13,7 @@ export class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIde
         });
     }
     protected onChange(mode: TFeatureEvent, features?: TIdentityGeoJSONFeature[] | undefined): void {
-        if(mode !== "destory" && mode !== "all"){
+        if(mode ==='update' || mode === 'create' || mode === 'delete' || mode === 'clear'){
             this.reRender();
         }
     }

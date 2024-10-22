@@ -2,7 +2,8 @@
     <Map v-on:mapLoad="handleMapLoad"></Map>
     <div style="">
         <ZoomInterpolate v-if="loaded" :map="map"
-            :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint" :configs="{
+            :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint!" 
+            :configs="{
                 'line-color': {
                     defaultValue: '#ff0000',
                     valueConverter: v => v

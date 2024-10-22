@@ -1,5 +1,5 @@
 import maplibregl from 'maplibre-gl';
-import { LayerProxy } from '../maplugin-core';
+import { LayerProxy } from '@maplugin-vue/core';
 
 export * from './GeoJSONlayerManager';
 

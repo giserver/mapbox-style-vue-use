@@ -3,7 +3,7 @@
         <div class="slider-triggers" @mousemove="handleSliderTriggerMouseMove" @mouseup="handleSliderTriggerMouseUp">
             <div v-for="i in (maxZoom - minZoom + 1)" :key="i" @mouseover="handleSliderTriggerMouseOver(i)"
                 @mouseout="handleSliderTriggerMouseOut">
-                <div :class="{ 'slider-trigger-top': true, 'active': activeMarkKey === i }" :style="{
+                <div :class="{ 'slider-trigger-top': true, 'active': activeMarkZoom === i }" :style="{
                     cursor: marks[i] ? 'pointer' : 'default'
                 }" @click="handleSliderTriggerTopClick(i)" @mousedown="handleSliderTriggerTopMouseDown">
                 </div>
@@ -25,7 +25,7 @@
             <div class="slider-cursor-item ball" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
                 left: calCursorLeft(i) + 'px',
                 opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0,
-                background: activeMarkKey === i ? '#111' : '#ccc'
+                background: activeMarkZoom === i ? '#111' : '#ccc'
             }">
             </div>
         </div>
@@ -49,26 +49,23 @@
         </div>
     </div>
 
-    <slot name="controller" :mark="marks[activeMarkKey]"></slot>
+    <slot name="controller" :mark="marks[activeMarkZoom]"></slot>
 </template>
 
-<script setup lang="ts" generic="T">
-import { reactive, ref, watch } from 'vue';
+<script setup lang="ts" generic="TK extends string,TMark extends Record<TK, any>">
+import { ref } from 'vue';
 import { IMap } from '../../types';
 
-type TMark = {
-    [K in keyof T]: any
-}
-
 const props = withDefaults(defineProps<{
-    map: IMap,
-    value: T,
+    activeMarkZoom: number,
+    marks: Array<TMark | undefined>,
     configs: {
-        [K in keyof T]?: {
-            valueConverter?: (value: any) => any,
-            defaultValue: any,
+        [K in keyof TMark]: {
+            valueConverter?: (value: any) => TMark[K],
+            defaultValue: TMark[K],
         }
     },
+    map: IMap,
     minZoom?: number,
     maxZoom?: number,
     sliderWidth?: number,
@@ -76,64 +73,28 @@ const props = withDefaults(defineProps<{
     minZoom: 1,
     maxZoom: 23,
     sliderWidth: 300,
+    activeMarkZoom: 1
 });
+
+function setDefaultValue(zoom: number) {
+    const v = {} as any;
+    for (let k in props.configs) {
+        v[k] = props.configs[k].defaultValue;
+    }
+
+    props.marks[zoom] = v;
+}
+
+if (!props.marks[props.activeMarkZoom]) {
+    setDefaultValue(props.activeMarkZoom);
+}
 
 const widthPerRange = props.sliderWidth / (props.maxZoom - props.minZoom + 1);
 
-/**
- * 这个是被点击的mark，表示可以拖动，ranger球标显示红色
- */
-const activeMarkKey = ref<number>(1);
-
-/**
- * 滑动条上的所有标记
- */
-const marks = reactive<Array<TMark | undefined>>([]);
-for (let k in props.configs) {
-    const v = props.value[k];
-    if (v instanceof Array && v[0] === 'interpolate' && v[1] === 'linear' && v[2] === 'zoom') {
-        for (let i = 3; i < v.length; i += 2) {
-            const zoom = v[i];
-            const value = v[i + 1];
-
-            if (!marks[zoom]) marks[zoom] = {} as any;
-            (marks[zoom] as any)[k] = value;
-
-            if (activeMarkKey.value === 1) {
-                activeMarkKey.value = zoom;
-            }
-        }
-    } else {
-        marks[1] = {} as any;
-        for (const k in props.configs) {
-            (marks[1] as any)[k] = props.configs[k]!.defaultValue;
-        }
-    }
-}
-
-watch(marks, () => {
-    let values = {} as any;
-    for (let k in props.configs) {
-        values[k] = ['interpolate', ['linear'], ['zoom']] as any;
-    }
-
-    marks.forEach((m, zoom) => {
-        if (!m) return;
-
-        for (let k in m) {
-            let v = m[k];
-
-            if (((props.configs as any)[k]).valueConverter)
-                v = ((props.configs as any)[k]).valueConverter(v);
-
-            values[k].push(zoom, v);
-        }
-    });
-
-    for (let k in values) {
-        (props.value as any)[k] = values[k];
-    }
-});
+const emits = defineEmits<{
+    (e: "update:activeMarkZoom", value: number): void,
+    (e: "update:marks", value: Array<TMark | undefined>): void
+}>();
 
 /**
  * 上方trigger（symbol层）鼠标hover的mark key
@@ -161,14 +122,11 @@ function calZoomFromLeft(left: number) {
 }
 
 function handleSliderTriggerTopClick(zoom: number) {
-    if (!marks[zoom]) {
-        marks[zoom] = {} as any;
-        for (let k in props.configs) {
-            (marks[zoom] as any)[k] = props.configs[k]!.defaultValue;
-        }
+    if (!props.marks[zoom]) {
+        setDefaultValue(zoom);
     }
 
-    activeMarkKey.value = zoom;
+    emits('update:activeMarkZoom', zoom);
 }
 
 function handleSliderTriggerBottomClick(zoom: number) {
@@ -188,7 +146,7 @@ function handleSliderTriggerMouseOut() {
 let draggedMarkKey: number | undefined;
 let moveCoverData: { key: number, value: any } | undefined;
 function handleSliderTriggerTopMouseDown() {
-    if (triggerHoverKey.value !== activeMarkKey.value) return;
+    if (triggerHoverKey.value !== props.activeMarkZoom) return;
     draggedMarkKey = triggerHoverKey.value;
 }
 
@@ -213,22 +171,22 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     if (draggedMarkKey && triggerHoverKey.value && draggedMarkKey !== triggerHoverKey.value) {
         const lastMoveCoverData = moveCoverData;
         // 获取当前hover mark 复制数据
-        if (marks[triggerHoverKey.value]) {
-            moveCoverData = { key: triggerHoverKey.value, value: JSON.parse(JSON.stringify(marks[triggerHoverKey.value])) };
+        if (props.marks[triggerHoverKey.value]) {
+            moveCoverData = { key: triggerHoverKey.value, value: JSON.parse(JSON.stringify(props.marks[triggerHoverKey.value])) };
         } else {
             moveCoverData = undefined;
         }
 
-        marks[triggerHoverKey.value] = JSON.parse(JSON.stringify(marks[draggedMarkKey]));
+        props.marks[triggerHoverKey.value] = JSON.parse(JSON.stringify(props.marks[draggedMarkKey]));
 
         if (lastMoveCoverData) {
-            marks[lastMoveCoverData.key] = lastMoveCoverData.value;
+            props.marks[lastMoveCoverData.key] = lastMoveCoverData.value;
         } else {
-            marks[draggedMarkKey] = undefined;
+            props.marks[draggedMarkKey] = undefined;
         }
 
         draggedMarkKey = triggerHoverKey.value;
-        activeMarkKey.value = triggerHoverKey.value;
+        emits('update:activeMarkZoom', triggerHoverKey.value);
     }
 
     if (mapZoomCursorDragged) {

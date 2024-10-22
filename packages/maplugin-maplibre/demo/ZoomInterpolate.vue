@@ -1,34 +1,37 @@
 <template>
     <Map v-on:mapLoad="handleMapLoad"></Map>
-    <ZoomInterpolate v-if="loaded" :map="map"
-        :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint" :configs="{
-            'line-color': {
-                defaultValue: '#ff0000',
-                valueConverter: v => v
-            },
-            'line-width': {
-                defaultValue: 3,
-                valueConverter: v => parseInt(v)
-            }
-        }">
-        <template #symbol="{ mark }">
-            <div
-                :style="{ height: '20px', width: mark['line-width'] + 'px', backgroundColor: mark['line-color'], transform: 'rotate(0deg)' }">
-            </div>
-        </template>
+    <div style="">
+        <ZoomInterpolate v-if="loaded" :map="map"
+            :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint" :configs="{
+                'line-color': {
+                    defaultValue: '#ff0000',
+                    valueConverter: v => v
+                },
+                'line-width': {
+                    defaultValue: 3,
+                    valueConverter: v => parseInt(v)
+                }
+            }">
+            <template #symbol="{ mark }">
+                <div
+                    :style="{ height: '20px', width: mark['line-width'] + 'px', backgroundColor: mark['line-color'], transform: 'rotate(30deg)' }">
+                </div>
+            </template>
 
-        <template #controller="{ mark }">
-            <div>
-                <label for="line-color">线颜色</label>
-                <input id="line-color" type="color" v-model="mark['line-color']">
-            </div>
+            <template #controller="{ mark }">
+                <div>
+                    <label for="line-color">线颜色</label>
+                    <input id="line-color" type="color" v-model="mark['line-color']">
+                </div>
 
-            <div>
-                <label for="line-width">线宽</label>
-                <input id="line-width" type="range" min="1" max="10" step="1" v-model="mark['line-width']">
-            </div>
-        </template>
-    </ZoomInterpolate>
+                <div>
+                    <label for="line-width">线宽</label>
+                    <input id="line-width" type="range" min="1" max="10" step="1" v-model="mark['line-width']">
+                </div>
+            </template>
+        </ZoomInterpolate>
+    </div>
+
 </template>
 
 <script setup lang="ts">

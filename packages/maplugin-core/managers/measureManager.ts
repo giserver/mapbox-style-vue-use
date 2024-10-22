@@ -62,7 +62,6 @@ export class MeasureManager extends EditorManager {
     }
 
     constructor(glManager: GeoJSONLayerManager, options: MeasureOptions) {
-
         super(glManager, options);
         glManager.on('all', () => this.renderMeasure());
 
@@ -132,6 +131,18 @@ export class MeasureManager extends EditorManager {
         ]);
 
     }
+    
+    /**
+     * 设置面方向符号
+     * @param right 向右符号
+     * @param left 向左符号
+     */
+    setDirectionSymbol(right: string = '▶', left: string = '◀') {
+        this.glManager.map.setLayoutProperty(this.id_layer_polygon_clockwise, "text-field",
+            ['case', ['boolean', ['get', 'clockwise'], true], right, left]
+        );
+    }
+
 
     /**
      * 设置或更新测量数据（该接口数据不自动渲染geometry）

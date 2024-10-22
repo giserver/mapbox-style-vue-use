@@ -1,9 +1,8 @@
 <template>
     <Map v-on:mapLoad="handleMapLoad"></Map>
     <div style="">
-        <ZoomInterpolate v-if="loaded" :map="map"
-            :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint!" 
-            :configs="{
+        <ZoomExpression v-if="loaded" :map="map"
+            :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint!" :configs="{
                 'line-color': {
                     defaultValue: '#ff0000',
                     valueConverter: v => v
@@ -30,7 +29,7 @@
                     <input id="line-width" type="range" min="1" max="10" step="1" v-model="mark['line-width']">
                 </div>
             </template>
-        </ZoomInterpolate>
+        </ZoomExpression>
     </div>
 
 </template>
@@ -39,7 +38,7 @@
 import { ref } from 'vue';
 import Map from './Map.vue';
 import '../index';
-import { ZoomInterpolate } from '@maplugin-vue/core';
+import { ZoomExpression } from '@maplugin-vue/core';
 import "@maplugin-vue/core/dist/style.css"
 
 let map: maplibregl.Map;

@@ -14,13 +14,14 @@ const props = defineProps<{
 onMounted(() => {
   const map = new maplibregl.Map({
     container: 'map',
+    zoom: 2,
     style: "https://demotiles.maplibre.org/style.json",
     attributionControl: false
   });
 
   map.on('load', () => {
     props.onMapLoad(map);
-  })
+  });
 })
 </script>
 

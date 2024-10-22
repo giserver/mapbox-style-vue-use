@@ -1,5 +1,5 @@
-import ZoomInterpolate from './editor/ZoomInterpolate.vue';
+import ZoomExpression from './editor/ZoomExpression.vue';
 export * from './LayerProxy';
 export {
-    ZoomInterpolate
+    ZoomExpression
 };

@@ -52,26 +52,28 @@
     <slot name="controller" :mark="marks[activeMarkZoom]"></slot>
 </template>
 
-<script setup lang="ts" generic="TK extends string,TMark extends Record<TK, any>">
+<script setup lang="ts" generic="TMark extends Record<any, any>">
 import { ref } from 'vue';
 import { IMap } from '../../types';
 
-const props = withDefaults(defineProps<{
+export type TZoomSliderOptions<T> = {
     activeMarkZoom: number,
-    marks: Array<TMark | undefined>,
+    marks: Array<T | undefined>,
     configs: {
-        [K in keyof TMark]: {
-            valueConverter?: (value: any) => TMark[K],
-            defaultValue: TMark[K],
+        [K in keyof T]: {
+            valueConverter?: (value: any) => T[K],
+            defaultValue: T[K],
         }
     },
     map: IMap,
     minZoom?: number,
     maxZoom?: number,
     sliderWidth?: number,
-}>(), {
+}
+
+const props = withDefaults(defineProps<TZoomSliderOptions<TMark>>(), {
     minZoom: 1,
-    maxZoom: 23,
+    maxZoom: 22,
     sliderWidth: 300,
     activeMarkZoom: 1
 });
@@ -110,7 +112,7 @@ const currentMapZoom = ref<number>(props.map.getZoom());
  * 监听地图zoom变化，修改游标
  */
 props.map.on('zoom', (_: any) => {
-    currentMapZoom.value = props.map.getZoom();
+    currentMapZoom.value = Math.max(props.map.getZoom(), 1);
 });
 
 function calCursorLeft(zoom: number) {
@@ -274,7 +276,6 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     height: var(--slider-ranger-height);
     top: 60%;
     transform: translateY(-100%);
-    border-radius: 4px;
 }
 
 .slider-labels {

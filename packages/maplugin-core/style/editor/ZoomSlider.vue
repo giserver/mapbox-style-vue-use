@@ -22,10 +22,9 @@
         </div>
 
         <div class="slider-ranger">
-            <div class="slider-cursor-item ball" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
+            <div class="slider-cursor-item ball" :class="{active: activeMarkZoom === i}" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
                 left: calCursorLeft(i) + 'px',
-                opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0,
-                background: activeMarkZoom === i ? '#111' : '#ccc'
+                opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0
             }">
             </div>
         </div>
@@ -227,6 +226,10 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     height: var(--slider-ranger-ball-size);
     border-radius: 50%;
     background: #ccc;
+}
+
+.slider-cursor-item.ball.active{
+    background: #111;
 }
 
 .slider-triggers {

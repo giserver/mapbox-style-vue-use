@@ -1,18 +1,18 @@
 <template>
-    <div class="slider">
-        <div class="slider-triggers" @mousemove="handleSliderTriggerMouseMove" @mouseup="handleSliderTriggerMouseUp">
+    <div class="zoom-slider">
+        <div class="zoom-slider-triggers" @mousemove="handleSliderTriggerMouseMove" @mouseup="handleSliderTriggerMouseUp">
             <div v-for="i in (maxZoom - minZoom + 1)" :key="i" @mouseover="handleSliderTriggerMouseOver(i)"
                 @mouseout="handleSliderTriggerMouseOut">
-                <div :class="{ 'slider-trigger-top': true, 'active': activeMarkZoom === i }" :style="{
+                <div :class="{ 'zoom-slider-trigger-top': true, 'active': activeMarkZoom === i }" :style="{
                     cursor: marks[i] ? 'pointer' : 'default'
                 }" @click="handleSliderTriggerTopClick(i)" @mousedown="handleSliderTriggerTopMouseDown">
                 </div>
-                <div class="slider-trigger-bottom" @click="handleSliderTriggerBottomClick(i)"></div>
+                <div class="zoom-slider-trigger-bottom" @click="handleSliderTriggerBottomClick(i)"></div>
             </div>
         </div>
 
-        <div class="slider-symble">
-            <div class="slider-cursor-item" v-for="m, i in marks" :key="i" :style="{
+        <div class="zoom-slider-symble">
+            <div class="zoom-slider-cursor-item" v-for="m, i in marks" :key="i" :style="{
                 opacity: m ? 1 : 0,
                 left: calCursorLeft(i) + 'px',
                 transform: 'translate(-50%, -100%)'
@@ -21,16 +21,17 @@
             </div>
         </div>
 
-        <div class="slider-ranger">
-            <div class="slider-cursor-item ball" :class="{active: activeMarkZoom === i}" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
-                left: calCursorLeft(i) + 'px',
-                opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0
-            }">
+        <div class="zoom-slider-ranger">
+            <div class="zoom-slider-cursor-item ball" :class="{ active: activeMarkZoom === i }"
+                v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
+                    left: calCursorLeft(i) + 'px',
+                    opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0
+                }">
             </div>
         </div>
 
-        <div class="slider-labels">
-            <div class="slider-cursor-item" :style="{
+        <div class="zoom-slider-labels">
+            <div class="zoom-slider-cursor-item" :style="{
                 left: calCursorLeft(currentMapZoom) + 'px',
                 cursor: 'ew-resize',
                 zIndex: 100
@@ -38,7 +39,7 @@
                 <div>▲</div>
                 <div>{{ currentMapZoom.toFixed(1) }}</div>
             </div>
-            <div class="slider-cursor-item label" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
+            <div class="zoom-slider-cursor-item label" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
                 left: calCursorLeft(i) + 'px',
                 opacity: marks[i] !== undefined || triggerHoverKey === i ? (Math.min(Math.abs(currentMapZoom - i), 1)) * 0.5 : 0,
             }">
@@ -191,7 +192,7 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     }
 
     if (mapZoomCursorDragged) {
-        const bound = document.querySelector('.slider')!.getBoundingClientRect();
+        const bound = document.querySelector('.zoom-slider')!.getBoundingClientRect();
         const left = e.clientX - bound.left;
 
         props.map.setZoom(calZoomFromLeft(left));
@@ -201,7 +202,7 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
 </script>
 
 <style scoped>
-.slider {
+.zoom-slider {
     position: relative;
     width: v-bind(sliderWidth + 'px');
     height: 100px;
@@ -215,12 +216,12 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     user-select: none;
 }
 
-.slider-cursor-item {
+.zoom-slider-cursor-item {
     position: absolute;
     transform: translateX(-50%);
 }
 
-.slider-cursor-item.ball {
+.zoom-slider-cursor-item.ball {
     top: calc((var(--slider-ranger-height) - var(--slider-ranger-ball-size))/2);
     width: var(--slider-ranger-ball-size);
     height: var(--slider-ranger-ball-size);
@@ -228,11 +229,11 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     background: #ccc;
 }
 
-.slider-cursor-item.ball.active{
+.zoom-slider-cursor-item.ball.active {
     background: #111;
 }
 
-.slider-triggers {
+.zoom-slider-triggers {
     display: flex;
     width: 100%;
     height: 100%;
@@ -240,39 +241,39 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     z-index: 99;
 }
 
-.slider-triggers>div {
+.zoom-slider-triggers>div {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.slider-triggers>div:hover {
+.zoom-slider-triggers>div:hover {
     background-color: #ccc;
     opacity: 0.1;
 }
 
-.slider-trigger-top {
+.zoom-slider-trigger-top {
     width: 100%;
     height: 60%;
 }
 
-.slider-trigger-top.active:hover {
+.zoom-slider-trigger-top.active:hover {
     cursor: ew-resize !important;
 }
 
-.slider-trigger-bottom {
+.zoom-slider-trigger-bottom {
     width: 100%;
     flex: 1;
 }
 
-.slider-symble {
+.zoom-slider-symble {
     position: absolute;
     top: 60%;
     width: 100%;
     transform: translateY(calc(-100% - var(--slider-ranger-height) - 8px));
 }
 
-.slider-ranger {
+.zoom-slider-ranger {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.05);
     width: 100%;
@@ -281,7 +282,7 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     transform: translateY(-100%);
 }
 
-.slider-labels {
+.zoom-slider-labels {
     position: absolute;
     width: 100%;
     top: 60%;

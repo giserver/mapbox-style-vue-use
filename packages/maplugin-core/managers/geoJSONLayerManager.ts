@@ -9,7 +9,7 @@ export interface GeoJSONLayerManagerOptions<TFeature extends TIdentityGeoJSONFea
     data: Array<TFeature>;
 }
 
-export abstract class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
+export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
     private events = new Map<string, Array<(e: { features?: TFeature[] }) => void>>();
     protected readonly layers = new Array<string>();
     protected data = new Map<string, TFeature>();

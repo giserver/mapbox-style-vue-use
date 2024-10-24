@@ -2,6 +2,7 @@ import mapboxgl from 'mapbox-gl';
 import { LayerProxy } from '../maplugin-core';
 
 export * from './GeoJSONlayerManager';
+export * from '../maplugin-core'
 
 type AnyLayerSource = {
 	source?: mapboxgl.LayerSpecification["source"] | mapboxgl.SourceSpecification;

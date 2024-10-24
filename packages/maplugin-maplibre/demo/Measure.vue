@@ -84,8 +84,7 @@
 
 <script setup lang="ts">
 import Map from './Map.vue';
-import { GeoJSONLayerManager } from '../GeoJSONlayerManager';
-import { MeasureManager, TEditorGeometryType, TIdentityGeoJSONFeature, Units } from '../../maplugin-core';
+import { GeoJSONLayerManager, MeasureManager, TEditorGeometryType, TIdentityGeoJSONFeature, Units } from '../index';
 import { ref, watch } from 'vue';
 
 const value = ref("");
@@ -121,7 +120,7 @@ watch(precisions, a => {
     measure.setPrecision('M2', parseInt(a[2] ?? "2"));
     measure.setPrecision('KM2', parseInt(a[3] ?? "2"));
     measure.setPrecision('MU', parseInt(a[4] ?? "2"));
-},{deep:true});
+}, { deep: true });
 
 function onMapLoad(map: maplibregl.Map) {
     const glManager = new GeoJSONLayerManager<TIdentityGeoJSONFeature>(map, []);

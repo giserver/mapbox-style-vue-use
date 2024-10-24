@@ -3,7 +3,7 @@ import { EditorManager, EditorOptions } from './EditorManager';
 import { Units } from '../utils/units';
 import { Measurement } from '../utils/measurement';
 import { Tools } from '../utils/tools';
-import { GeoJSONLayerManager, TIdentityGeoJSONFeature } from './GeoJSONLayerManager';
+import { GeoJSONLayerManagerBase, TIdentityGeoJSONFeature } from './GeoJSONLayerManager';
 
 
 type TMeasureUnits = {
@@ -61,7 +61,7 @@ export class MeasureManager extends EditorManager {
         return this.units.area;
     }
 
-    constructor(glManager: GeoJSONLayerManager, options: MeasureOptions) {
+    constructor(glManager: GeoJSONLayerManagerBase, options: MeasureOptions) {
         super(glManager, options);
         glManager.on('all', () => this.renderMeasure());
 

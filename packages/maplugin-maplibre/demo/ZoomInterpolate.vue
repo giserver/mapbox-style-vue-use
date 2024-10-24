@@ -38,7 +38,7 @@
 import { ref } from 'vue';
 import Map from './Map.vue';
 import '../index';
-import { ZoomExpression } from '../../maplugin-core';
+import { ZoomExpression } from '../index';
 
 let map: maplibregl.Map;
 const loaded = ref(false);
@@ -59,8 +59,7 @@ function handleMapLoad(m: maplibregl.Map) {
 </script>
 
 <style>
-:deep(.zoom-slider){
-    line-height: 8px;
-    background-color: red;
+.zoom-slider {
+    line-height: normal;
 }
 </style>

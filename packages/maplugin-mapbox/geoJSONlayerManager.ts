@@ -1,4 +1,4 @@
-import { GeoJSONLayerManager as GeoJSONLayerManagerBase, TFeatureEvent, TIdentityGeoJSONFeature } from '../maplugin-core';
+import { GeoJSONLayerManagerBase, TFeatureEvent, TIdentityGeoJSONFeature } from '../maplugin-core';
 
 export class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature>
     extends GeoJSONLayerManagerBase<TFeature> {

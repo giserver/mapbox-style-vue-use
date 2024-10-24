@@ -1,5 +1,5 @@
 import { Tools } from "../utils/tools";
-import { GeoJSONLayerManager } from "./GeoJSONLayerManager";
+import { GeoJSONLayerManagerBase } from "./GeoJSONLayerManager";
 
 /**
  * 图层图形类型
@@ -29,7 +29,7 @@ export class EditorManager {
     /**
      *
      */
-    constructor(protected glManager: GeoJSONLayerManager, private options: EditorOptions) {
+    constructor(protected glManager: GeoJSONLayerManagerBase, private options: EditorOptions) {
         //#region add layers
 
         glManager.addLayer({

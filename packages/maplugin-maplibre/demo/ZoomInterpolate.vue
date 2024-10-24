@@ -1,7 +1,7 @@
 <template>
     <Map v-on:mapLoad="handleMapLoad"></Map>
     <div style="">
-        <ZoomExpression v-if="loaded" :map="map"
+        <ZoomExpression v-if="loaded" :map="map" type="linear"
             :value="map.getLayerProxy<maplibregl.LineLayerSpecification>('china-line').value.paint!" :configs="{
                 'line-color': {
                     defaultValue: '#ff0000',
@@ -38,8 +38,7 @@
 import { ref } from 'vue';
 import Map from './Map.vue';
 import '../index';
-import { ZoomExpression } from '@maplugin-vue/core';
-import "@maplugin-vue/core/dist/style.css"
+import { ZoomExpression } from '../../maplugin-core';
 
 let map: maplibregl.Map;
 const loaded = ref(false);
@@ -59,4 +58,9 @@ function handleMapLoad(m: maplibregl.Map) {
 }
 </script>
 
-<style scoped></style>
+<style>
+:deep(.zoom-slider){
+    line-height: 8px;
+    background-color: red;
+}
+</style>

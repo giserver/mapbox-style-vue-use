@@ -23,7 +23,6 @@
     "build": "vite build --config ../../configs/vite.config.ts"
   },
   "dependencies": {
-    "@maplugin-vue/core": "workspace:^"
   },
   "devDependencies": {
     "maplibre-gl": "^4.7.1"

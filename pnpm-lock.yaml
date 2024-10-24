@@ -7,7 +7,23 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@turf/boolean-clockwise':
+        specifier: ^7.1.0
+        version: 7.1.0
+      '@turf/center':
+        specifier: ^7.1.0
+        version: 7.1.0
+      proj4:
+        specifier: ^2.12.1
+        version: 2.12.1
     devDependencies:
+      '@types/geojson':
+        specifier: ^7946.0.14
+        version: 7946.0.14
+      '@types/proj4':
+        specifier: ^2.5.5
+        version: 2.5.5
       '@vitejs/plugin-vue':
         specifier: ^5.1.4
         version: 5.1.4(vite@5.4.9)(vue@3.5.12(typescript@5.6.3))
@@ -30,40 +46,13 @@ importers:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
 
-  packages/maplugin-core:
-    dependencies:
-      '@turf/boolean-clockwise':
-        specifier: ^7.1.0
-        version: 7.1.0
-      '@turf/center':
-        specifier: ^7.1.0
-        version: 7.1.0
-      proj4:
-        specifier: ^2.12.1
-        version: 2.12.1
-    devDependencies:
-      '@types/geojson':
-        specifier: ^7946.0.14
-        version: 7946.0.14
-      '@types/proj4':
-        specifier: ^2.5.5
-        version: 2.5.5
-
   packages/maplugin-mapbox:
-    dependencies:
-      '@maplugin-vue/core':
-        specifier: workspace:^
-        version: link:../maplugin-core
     devDependencies:
       mapbox-gl:
         specifier: ^3.7.0
         version: 3.7.0
 
   packages/maplugin-maplibre:
-    dependencies:
-      '@maplugin-vue/core':
-        specifier: workspace:^
-        version: link:../maplugin-core
     devDependencies:
       maplibre-gl:
         specifier: ^4.7.1

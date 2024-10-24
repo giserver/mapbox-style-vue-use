@@ -1,6 +1,7 @@
 <template>
     <div class="zoom-slider">
-        <div class="zoom-slider-triggers" @mousemove="handleSliderTriggerMouseMove" @mouseup="handleSliderTriggerMouseUp">
+        <div class="zoom-slider-triggers" @mousemove="handleSliderTriggerMouseMove"
+            @mouseup="handleSliderTriggerMouseUp">
             <div v-for="i in (maxZoom - minZoom + 1)" :key="i" @mouseover="handleSliderTriggerMouseOver(i)"
                 @mouseout="handleSliderTriggerMouseOut">
                 <div :class="{ 'zoom-slider-trigger-top': true, 'active': activeMarkZoom === i }" :style="{
@@ -12,9 +13,9 @@
         </div>
 
         <div class="zoom-slider-symble">
-            <div class="zoom-slider-cursor-item" v-for="m, i in marks" :key="i" :style="{
+            <div class="zoom-slider-subdivision" v-for="m, i in marks" :key="i" :style="{
                 opacity: m ? 1 : 0,
-                left: calCursorLeft(i) + 'px',
+                left: calSubdivisionLeft(i) + 'px',
                 transform: 'translate(-50%, -100%)'
             }">
                 <slot v-if="m" name="symbol" :mark="m"></slot>
@@ -22,52 +23,93 @@
         </div>
 
         <div class="zoom-slider-ranger">
-            <div class="zoom-slider-cursor-item ball" :class="{ active: activeMarkZoom === i }"
+            <div class="zoom-slider-subdivision ball" :class="{ active: activeMarkZoom === i }"
                 v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
-                    left: calCursorLeft(i) + 'px',
+                    left: calSubdivisionLeft(i) + 'px',
                     opacity: marks[i] !== undefined || triggerHoverKey === i ? 1 : 0
                 }">
             </div>
         </div>
 
         <div class="zoom-slider-labels">
-            <div class="zoom-slider-cursor-item" :style="{
-                left: calCursorLeft(currentMapZoom) + 'px',
-                cursor: 'ew-resize',
-                zIndex: 100
+            <div class="zoom-slider-subdivision cursor" :style="{
+                left: calSubdivisionLeft(currentMapZoom) + 'px',
             }" @mousedown="handleMapZoomCursorMouseDown" @mouseup="handleMapZoomCursorMouseUp">
-                <div>▲</div>
-                <div>{{ currentMapZoom.toFixed(1) }}</div>
+                <div class="symbol">▲</div>
+                <div class="zoom">{{ currentMapZoom.toFixed(1) }}</div>
             </div>
-            <div class="zoom-slider-cursor-item label" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
-                left: calCursorLeft(i) + 'px',
+            <div class="zoom-slider-subdivision label" v-for="i in (maxZoom - minZoom + 1)" :key="i" :style="{
+                left: calSubdivisionLeft(i) + 'px',
                 opacity: marks[i] !== undefined || triggerHoverKey === i ? (Math.min(Math.abs(currentMapZoom - i), 1)) * 0.5 : 0,
             }">
-                <div>▲</div>
-                <div>{{ i }}</div>
+                <div class="symbol">▲</div>
+                <div class="zoom">{{ i }}</div>
             </div>
         </div>
     </div>
-
-    <slot name="controller" :mark="marks[activeMarkZoom]"></slot>
 </template>
 
 <script setup lang="ts" generic="TMark extends Record<any, any>">
 import { ref } from 'vue';
 import { IMap } from '../../types';
 
+
+/**
+ * 组件设计
+ * 
+ *   █                                           symbol <slot>
+ * --●----------○-----------------------------   ranger
+ *   ▲   ...    △                                cursor
+ *   1   ...    7                                zoom
+ * 
+ * 1. 和普通的slider不同，分为上下两个部分，上半区（symbol）和下半区（cursor + zoom）
+ * 2. 上半区 控制数据属性修改
+ *    左键单击空白区域增加一个mark symbol
+ *    单击已增加的mark symbol设置该mark为active状态记录activeMarkZoom
+ *    mark处于active后，再用鼠标拖动，mark symbol会跟随鼠标移动，并在鼠标抬起事件设置该位置zoom对应被拖拽的mark
+ * 3. 下半区 控制地图缩放（zoom）
+ *    存在游标，用鼠标拖动，设置地图zoom，同时跟随地图zoom变化
+ */
+
 export type TZoomSliderOptions<T> = {
+    /**
+     * 当前选中的mark
+     */
     activeMarkZoom: number,
+
+    /**
+     * 全部的mark数据，数组下标代表zoom
+     */
     marks: Array<T | undefined>,
+
+    /**
+     * 数据配置，只有配置的属性，才能在增加mark时赋值
+     */
     configs: {
         [K in keyof T]: {
             valueConverter?: (value: any) => T[K],
             defaultValue: T[K],
         }
     },
+    
+    /**
+     * 地图
+     */
     map: IMap,
+
+    /**
+     * 地图最小缩放级别
+     */
     minZoom?: number,
+
+    /**
+     * 最大缩放级别
+     */
     maxZoom?: number,
+
+    /**
+     * 宽度
+     */
     sliderWidth?: number,
 }
 
@@ -115,14 +157,26 @@ props.map.on('zoom', (_: any) => {
     currentMapZoom.value = Math.max(props.map.getZoom(), 1);
 });
 
-function calCursorLeft(zoom: number) {
+/**
+ * 计算细分zoom对应的css left
+ * @param zoom 
+ */
+function calSubdivisionLeft(zoom: number) {
     return (zoom - props.minZoom + 0.5) * widthPerRange;
 }
 
+/**
+ * 从css left 计算zoom
+ * @param left 
+ */
 function calZoomFromLeft(left: number) {
     return left / widthPerRange + props.minZoom - 0.5;
 }
 
+/**
+ * 点击上半区，如果该位置没有mark，设置mark并赋默认值，设置为activeMarkZoom
+ * @param zoom 
+ */
 function handleSliderTriggerTopClick(zoom: number) {
     if (!props.marks[zoom]) {
         setDefaultValue(zoom);
@@ -131,10 +185,31 @@ function handleSliderTriggerTopClick(zoom: number) {
     emits('update:activeMarkZoom', zoom);
 }
 
+/**
+ * 点击下半区，地图缩放到zoom
+ * @param zoom 
+ */
 function handleSliderTriggerBottomClick(zoom: number) {
     props.map.easeTo({
         zoom: zoom,
     });
+}
+
+let draggedMarkKey: number | undefined;
+let moveCoverData: { key: number, value: any } | undefined;
+let mapZoomCursorDragged = false;
+
+function handleSliderTriggerTopMouseDown() {
+    if (triggerHoverKey.value !== props.activeMarkZoom) return;
+    draggedMarkKey = triggerHoverKey.value;
+}
+
+function handleMapZoomCursorMouseDown() {
+    mapZoomCursorDragged = true;
+}
+
+function handleMapZoomCursorMouseUp() {
+    mapZoomCursorDragged = false;
 }
 
 function handleSliderTriggerMouseOver(zoom: number) {
@@ -143,22 +218,6 @@ function handleSliderTriggerMouseOver(zoom: number) {
 
 function handleSliderTriggerMouseOut() {
     triggerHoverKey.value = undefined;
-}
-
-let draggedMarkKey: number | undefined;
-let moveCoverData: { key: number, value: any } | undefined;
-function handleSliderTriggerTopMouseDown() {
-    if (triggerHoverKey.value !== props.activeMarkZoom) return;
-    draggedMarkKey = triggerHoverKey.value;
-}
-
-let mapZoomCursorDragged = false;
-function handleMapZoomCursorMouseDown() {
-    mapZoomCursorDragged = true;
-}
-
-function handleMapZoomCursorMouseUp() {
-    mapZoomCursorDragged = false;
 }
 
 function handleSliderTriggerMouseUp() {
@@ -180,7 +239,10 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
         }
 
         props.marks[triggerHoverKey.value] = JSON.parse(JSON.stringify(props.marks[draggedMarkKey]));
-
+        
+        /**
+         * 数据回溯，如果拖动symbol时到达一个存在的mark，过去后，这个mark要复原
+         */
         if (lastMoveCoverData) {
             props.marks[lastMoveCoverData.key] = lastMoveCoverData.value;
         } else {
@@ -216,12 +278,12 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     user-select: none;
 }
 
-.zoom-slider-cursor-item {
+.zoom-slider-subdivision {
     position: absolute;
     transform: translateX(-50%);
 }
 
-.zoom-slider-cursor-item.ball {
+.zoom-slider-subdivision.ball {
     top: calc((var(--slider-ranger-height) - var(--slider-ranger-ball-size))/2);
     width: var(--slider-ranger-ball-size);
     height: var(--slider-ranger-ball-size);
@@ -229,8 +291,13 @@ function handleSliderTriggerMouseMove(e: MouseEvent) {
     background: #ccc;
 }
 
-.zoom-slider-cursor-item.ball.active {
+.zoom-slider-subdivision.ball.active {
     background: #111;
+}
+
+.zoom-slider-subdivision.cursor {
+    cursor: ew-resize;
+    z-index: 100;
 }
 
 .zoom-slider-triggers {

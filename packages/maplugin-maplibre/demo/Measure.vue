@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import Map from './Map.vue';
 import { GeoJSONLayerManager } from '../GeoJSONlayerManager';
-import { MeasureManager, TEditorGeometryType, Units } from '../../maplugin-core';
+import { MeasureManager, TEditorGeometryType, TIdentityGeoJSONFeature, Units } from '../../maplugin-core';
 import { ref, watch } from 'vue';
 
 const value = ref("");
@@ -124,7 +124,7 @@ watch(precisions, a => {
 },{deep:true});
 
 function onMapLoad(map: maplibregl.Map) {
-    const glManager = new GeoJSONLayerManager(map, []);
+    const glManager = new GeoJSONLayerManager<TIdentityGeoJSONFeature>(map, []);
     measure = new MeasureManager(glManager, {});
     measure.setDirectionSymbol(">>", "<<");
     measure.showPolygonDirection(false);

@@ -1,5 +1,5 @@
 import mapboxgl from 'mapbox-gl';
-import { LayerProxy } from '@maplugin-vue/core';
+import { LayerProxy } from '../maplugin-core';
 
 export * from './GeoJSONlayerManager';
 

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm -r --filter=./packages/* run build",
     "release": "bumpp package.json packages/**/package.json",
-    "dev": "pnpm build & pnpm docs:dev",
+    "dev": "pnpm docs:dev",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -14,7 +14,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@turf/boolean-clockwise": "^7.1.0",
+    "@turf/center": "^7.1.0",
+    "proj4": "^2.12.1"
+  },
   "devDependencies": {
+    "@types/geojson": "^7946.0.14",
+    "@types/proj4": "^2.5.5",
     "@vitejs/plugin-vue": "^5.1.4",
     "bumpp": "^9.7.1",
     "typescript": "^5.6.3",

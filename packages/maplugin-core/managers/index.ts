@@ -1,3 +1,3 @@
-export * from './MeasureManager';
-export * from './GeoJSONLayerManager';
-export * from './EditorManager';
+export * from './measure-manager';
+export * from './geojson-layer-manager';
+export * from './geojson-draw-manager';

@@ -15,7 +15,7 @@ export class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIde
     protected onChange(mode: TFeatureEvent, features?: TIdentityGeoJSONFeature[] | undefined): void {
         const source = this.map.getSource(this.source) as maplibregl.GeoJSONSource;
         if (features) {
-            if (mode === 'create') {
+            if (mode === 'add') {
                 source.updateData({
                     add: features
                 });

@@ -1,7 +1,7 @@
 import { IMap } from "../types";
 import { Tools } from "../utils/tools";
 
-export type TFeatureEvent = "all" | "create" | "update" | "delete" | "clear" | "destory";
+export type TFeatureEvent = "all" | "add" | "update" | "delete" | "clear" | "destory";
 export type TIdentityGeoJSONFeature = GeoJSON.Feature<GeoJSON.Geometry, { id: string }>;
 
 export interface GeoJSONLayerManagerOptions<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
@@ -68,11 +68,11 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
      * 创建数据
      * @param features 
      */
-    create(...features: TFeature[]) {
+    add(...features: TFeature[]) {
         features.forEach(f => {
             this.data.set(f.properties.id, f);
         });
-        this.triggerEvents("create", features);
+        this.triggerEvents("add", features);
 
         return features;
     }
@@ -108,7 +108,7 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
         feature.forEach(f => {
             this.data.delete(f.properties.id);
         });
-        this.triggerEvents("delete", feature)
+        this.triggerEvents("delete", feature);
     }
 
     /**
@@ -150,7 +150,7 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
      * 
      * maplibre更新部分数据时，最好使用 updata 方法
      * 
-     * 此类 create update delete clear 方法使用onChange去执行更新
+     * 此类 add update delete clear 方法使用onChange去执行更新
      */
     reRender() {
         (this.map.getSource(this.source) as any).setData(this.fc);

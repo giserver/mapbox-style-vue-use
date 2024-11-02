@@ -1,20 +1,17 @@
 import booleanClockwise from '@turf/boolean-clockwise';
-import { EditorManager, EditorOptions } from './EditorManager';
-import { Units } from '../utils/units';
-import { Measurement } from '../utils/measurement';
-import { Tools } from '../utils/tools';
-import { GeoJSONLayerManagerBase, TIdentityGeoJSONFeature } from './GeoJSONLayerManager';
-
+import { DrawManager, DrawOptions } from './geojson-draw-manager';
+import { GeoJSONLayerManagerBase, TIdentityGeoJSONFeature } from './geojson-layer-manager';
+import { Units, Measurement, Tools } from '../utils';
 
 type TMeasureUnits = {
     area: Units.TUnitsArea | "M2KM2",
     length: Units.TUnitsLength | "MKM",
 }
 
-interface MeasureOptions extends EditorOptions {
+interface MeasureOptions extends DrawOptions {
 }
 
-export class MeasureManager extends EditorManager {
+export class MeasureManager extends DrawManager {
     /**
      * 测量id
      * 
@@ -131,7 +128,7 @@ export class MeasureManager extends EditorManager {
         ]);
 
     }
-    
+
     /**
      * 设置面方向符号
      * @param right 向右符号
@@ -233,6 +230,9 @@ export class MeasureManager extends EditorManager {
             val ? undefined : ['!', ['boolean', ['get', 'center'], false]]);
     }
 
+    /**
+     * 清除测量数据
+     */
     clear() {
         super.clear();
         this.customFeatures = [];
@@ -245,6 +245,7 @@ export class MeasureManager extends EditorManager {
     renderMeasure() {
         const features = this.glManager.fc.features.concat(this.customFeatures);
 
+        // 设置测量结果数据
         (this.glManager.map.getSource(this.id_layer_measure_symbol)).setData({
             type: 'FeatureCollection',
             features: Measurement.cal(features, {
@@ -296,6 +297,7 @@ export class MeasureManager extends EditorManager {
             })
         });
 
+        // 设置方向数据
         (this.glManager.map.getSource(this.id_layer_polygon_clockwise)).setData({
             type: 'FeatureCollection',
             features: features.map(x => {

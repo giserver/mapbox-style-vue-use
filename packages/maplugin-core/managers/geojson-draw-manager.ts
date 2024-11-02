@@ -1,17 +1,17 @@
 import { Tools } from "../utils/tools";
-import { GeoJSONLayerManagerBase } from "./GeoJSONLayerManager";
+import { GeoJSONLayerManagerBase } from "./geojson-layer-manager";
 
 /**
  * 图层图形类型
  */
-export type TEditorGeometryType = "Point" | "LineString" | "Polygon"
+export type TDrawGeometryType = "Point" | "LineString" | "Polygon"
 
-export interface EditorOptions {
+export interface DrawOptions {
     onDrawed?(feature: GeoJSON.Feature): void;
     once?: boolean;
 }
 
-export class EditorManager {
+export class DrawManager {
     readonly id_layer_point = Tools.uuid();
     readonly id_layer_point_symbol = Tools.uuid();
     readonly id_layer_line = Tools.uuid();
@@ -29,7 +29,7 @@ export class EditorManager {
     /**
      *
      */
-    constructor(protected glManager: GeoJSONLayerManagerBase, private options: EditorOptions) {
+    constructor(protected glManager: GeoJSONLayerManagerBase, private options: DrawOptions) {
         //#region add layers
 
         glManager.addLayer({
@@ -134,7 +134,7 @@ export class EditorManager {
         }
     }
 
-    start(mode: TEditorGeometryType) {
+    start(mode: TDrawGeometryType) {
         this.stop();
 
         if (mode === 'Point')
@@ -173,9 +173,9 @@ export class EditorManager {
 
     private drawPoint() {
         const map = this.glManager.map;
-        
+
         const clickHandler = (e: any) => {
-            const features = this.glManager.create({
+            const features = this.glManager.add({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
@@ -191,14 +191,14 @@ export class EditorManager {
                 this.stop();
             }
         }
-        
+
         map.on('click', clickHandler);
         return () => map.off('click', clickHandler);
     }
 
     private drawLine() {
         const map = this.glManager.map;
-        
+
         const clickHandler = (e: any) => {
             const point = [e.lngLat.lng, e.lngLat.lat];
 
@@ -213,7 +213,7 @@ export class EditorManager {
 
             } else {
                 this.currentFeatureId = Tools.uuid();
-                this.glManager.create({
+                this.glManager.add({
                     type: 'Feature',
                     geometry: {
                         type: 'LineString',
@@ -316,7 +316,7 @@ export class EditorManager {
 
     private drawPolygon() {
         const map = this.glManager.map;
-        
+
         const clickHandler = (e: any) => {
             const point = [e.lngLat.lng, e.lngLat.lat];
 
@@ -334,7 +334,7 @@ export class EditorManager {
 
             } else {
                 this.currentFeatureId = Tools.uuid();
-                this.glManager.create({
+                this.glManager.add({
                     type: 'Feature',
                     geometry: {
                         type: 'Polygon',
@@ -350,7 +350,7 @@ export class EditorManager {
             }
         };
 
-        const doubleClickHandler = (e:any) => {
+        const doubleClickHandler = (e: any) => {
             map.off('mousemove', mouseMoveHandler);
             map.off('contextmenu', rightClickHandler);
 

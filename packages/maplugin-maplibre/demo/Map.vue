@@ -7,16 +7,19 @@ import { onMounted } from 'vue';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import maplibregl from 'maplibre-gl';
 
-const props = defineProps<{
-  onMapLoad(map: maplibregl.Map): void
-}>();
+const props = withDefaults(defineProps<{
+  onMapLoad(map: maplibregl.Map): void,
+  style?: string | maplibregl.StyleSpecification
+}>(), {
+  style: "https://demotiles.maplibre.org/style.json"
+});
 
 onMounted(() => {
   const map = new maplibregl.Map({
     container: 'map',
     zoom: 2,
-    style: "https://demotiles.maplibre.org/style.json",
-    attributionControl: false
+    style: props.style,
+    // attributionControl: false
   });
 
   map.on('load', () => {

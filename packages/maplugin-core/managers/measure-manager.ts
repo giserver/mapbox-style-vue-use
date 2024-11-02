@@ -130,6 +130,11 @@ export class MeasureManager extends DrawManager {
 
     }
 
+    setVisible(visible: boolean) {
+        this.glManager.map.setLayoutProperty(this.id_layer_measure_symbol, 'visibility', visible ? 'visible' : 'none');
+        this.glManager.map.setLayoutProperty(this.id_layer_polygon_clockwise, 'visibility', visible ? 'visible' : 'none');
+    }
+
     /**
      * 设置面方向符号
      * @param right 向右符号

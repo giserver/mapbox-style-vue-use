@@ -1,10 +1,16 @@
 export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load';
 
 export interface IMap {
+    dragRotate: number,
+    getContainer(): HTMLElement,
+
     getStyle(): any;
     setStyle(style: string): any;
     setCenter(center: [number, number]): void,
-
+    setBearing(bearing: number): void;
+    getBearing(): number;
+    setPitch(pitch: number): void;
+    getPitch(): number;
     getZoom(): number,
     setZoom(zoom: number): void,
 

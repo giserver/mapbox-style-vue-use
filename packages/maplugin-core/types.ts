@@ -1,6 +1,8 @@
-export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom';
+export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load';
 
 export interface IMap {
+    getStyle(): any;
+    setStyle(style: string): any;
     setCenter(center: [number, number]): void,
 
     getZoom(): number,

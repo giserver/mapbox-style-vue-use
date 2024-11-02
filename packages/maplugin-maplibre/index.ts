@@ -1,5 +1,5 @@
 import maplibregl from 'maplibre-gl';
-import { LayerProxy } from '../maplugin-core';
+import { LayerProxy, CONTRACT_STRINGS } from '../maplugin-core';
 
 export * from './geojson-layer-manager';
 export * from '../maplugin-core';
@@ -15,16 +15,13 @@ maplibregl.Map.prototype.addLayer = function (layer: maplibregl.AddLayerObject, 
     if (layer.type !== 'custom') {
         const proxy = new LayerProxy(this, layer);
 
-        if (!(this as any)["_layerProxies"])
-            (this as any)["_layerProxies"] = {};
-
-        (this as any)["_layerProxies"][layer.id] = proxy;
+        (this as any)[CONTRACT_STRINGS.MAP_LAYER_PROXY_SYMBOL] ??= {};
+        (this as any)[CONTRACT_STRINGS.MAP_LAYER_PROXY_SYMBOL][layer.id] = proxy;
     }
-
 
     return _addLayer.call(this, layer, before);
 }
 
 maplibregl.Map.prototype.getLayerProxy = function <T extends maplibregl.LayerSpecification>(id: string) {
-    return (this as any)["_layerProxies"][id] as LayerProxy<T>;
+    return (this as any)[CONTRACT_STRINGS.MAP_LAYER_PROXY_SYMBOL][id] as LayerProxy<T>;
 }

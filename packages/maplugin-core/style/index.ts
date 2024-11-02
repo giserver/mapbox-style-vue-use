@@ -1,5 +1,5 @@
 import ZoomExpression from './editor/ZoomExpression.vue';
-export * from './LayerProxy';
+export * from './layer-proxy';
 export {
     ZoomExpression
 };

@@ -1,4 +1,4 @@
-export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load';
+export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load' | 'draw.selectionchange';
 
 export interface IMap {
     dragRotate: number,
@@ -34,3 +34,5 @@ export interface IMap {
 
     setFilter(id: string, filter?: any, options?: any): void
 }
+
+export type TIdentityGeoJSONFeature = GeoJSON.Feature<GeoJSON.Geometry, { id: string }>;

@@ -1,8 +1,7 @@
-import { IMap } from "../types";
+import { IMap, TIdentityGeoJSONFeature } from "../types";
 import { Tools } from "../utils/tools";
 
 export type TFeatureEvent = "all" | "add" | "update" | "delete" | "clear" | "destory";
-export type TIdentityGeoJSONFeature = GeoJSON.Feature<GeoJSON.Geometry, { id: string }>;
 
 export interface GeoJSONLayerManagerOptions<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
     map: IMap;
@@ -13,6 +12,7 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
     private events = new Map<string, Array<(e: { features?: TFeature[] }) => void>>();
     protected readonly layers = new Array<string>();
     protected data = new Map<string, TFeature>();
+    protected hiddenData = new Map<string, TFeature>();
 
     readonly map: IMap;
     readonly source: string = Tools.uuid();
@@ -43,6 +43,15 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
     protected abstract onChange(mode: TFeatureEvent, features?: TFeature[]): void;
 
     /**
+     * 获取数据
+     * @param id 
+     * @returns 
+     */
+    query(id: string): TFeature | undefined {
+        return this.data.get(id);
+    }
+
+    /**
      * 添加图层
      * @param layer 
      */
@@ -53,15 +62,6 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
             this.map.addLayer({ ...layer, source: this.source } as any);
             this.layers.push(layer.id);
         }
-    }
-
-    /**
-     * 获取数据
-     * @param id 
-     * @returns 
-     */
-    query(id: string): TFeature | undefined {
-        return this.data.get(id);
     }
 
     /**
@@ -131,6 +131,65 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
         });
 
         this.map.removeSource(this.source);
+    }
+
+    /**
+     * 设置Feature隐藏
+     * @param id
+     * @returns 
+     */
+    setFeatureHidden(...id: string[]) {
+        const fs = new Array<TFeature>();
+        id.forEach(i => {
+            const f = this.data.get(i);
+            if (!f) return;
+
+            // 如果已经隐藏，则不处理
+            if (this.hiddenData.has(i)) return;
+
+            // 处理隐藏
+            this.data.delete(i)
+            this.hiddenData.set(i, f);
+            fs.push(f);
+        });
+
+        this.onChange("delete", fs);
+    }
+
+    /**
+     * 
+     * @param id 当id为空时清除所有隐藏
+     */
+    clearFeatureHidden(...id: string[]) {
+        const fs = new Array<TFeature>();
+        if (id.length === 0)
+            id.forEach(i => {
+                const f = this.hiddenData.get(i);
+                if (!f) return;
+
+                this.hiddenData.delete(i);
+                this.data.set(i, f);
+                fs.push(f);
+            });
+        else {
+            this.hiddenData.forEach((v, k) => {
+                this.data.set(k, v);
+                fs.push(v);
+            });
+            this.hiddenData.clear();
+        }
+
+        this.onChange('add', fs);
+    }
+
+    /**
+     * 设置是否显示
+     * @param visible 
+     */
+    setVisible(visible: boolean) {
+        this.layers.forEach(l => {
+            this.map.setLayoutProperty(l, 'visibility', visible ? 'visible' : 'none');
+        });
     }
 
     /**

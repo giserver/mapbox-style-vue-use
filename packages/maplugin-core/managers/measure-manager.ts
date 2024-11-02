@@ -1,7 +1,8 @@
 import booleanClockwise from '@turf/boolean-clockwise';
 import { DrawManager, DrawOptions } from './geojson-draw-manager';
-import { GeoJSONLayerManagerBase, TIdentityGeoJSONFeature } from './geojson-layer-manager';
+import { GeoJSONLayerManagerBase } from './geojson-layer-manager';
 import { Units, Measurement, Tools } from '../utils';
+import { TIdentityGeoJSONFeature } from '../types';
 
 type TMeasureUnits = {
     area: Units.TUnitsArea | "M2KM2",

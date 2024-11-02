@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "build": "pnpm -r --filter=./packages/* run build",
     "release": "bumpp package.json packages/**/package.json",
@@ -15,12 +16,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@turf/boolean-clockwise": "^7.1.0",
     "@turf/center": "^7.1.0",
     "proj4": "^2.12.1"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.14",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.8",
     "@types/proj4": "^2.5.5",
     "@vitejs/plugin-vue": "^5.1.4",
     "bumpp": "^9.7.1",

@@ -9,10 +9,10 @@
                 <input type="radio" :value="t" v-model="value">
             </div>
             <div>
-                <button class="button" @click="measure.clear()">清除</button>
+                <button class="button" @click="drawer.clear()">清除</button>
             </div>
             <div>
-                <button class="button" @click="measure.stop()">停止</button>
+                <button class="button" @click="drawer.stop()">停止</button>
             </div>
         </div>
 
@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import Map from './Map.vue';
-import { GeoJSONLayerManager, MeasureManager, TDrawGeometryType, TIdentityGeoJSONFeature, Units } from '../index';
+import { DrawManager, GeoJSONLayerManager, MeasureManager, TDrawGeometryType, TIdentityGeoJSONFeature, Units } from '../index';
 import { ref, watch } from 'vue';
 
 const value = ref("");
@@ -95,6 +95,7 @@ const radios = {
 }
 
 let measure: MeasureManager;
+let drawer: DrawManager;
 const direction = ref(false);
 const distance = ref(false);
 const center = ref(false);
@@ -123,8 +124,8 @@ watch(precisions, a => {
 }, { deep: true });
 
 function onMapLoad(map: maplibregl.Map) {
-    const glManager = new GeoJSONLayerManager<TIdentityGeoJSONFeature>(map, []);
-    measure = new MeasureManager(glManager, {});
+    drawer = new DrawManager(new GeoJSONLayerManager<TIdentityGeoJSONFeature>(map, []));
+    measure = new MeasureManager(drawer, {});
     measure.setDirectionSymbol(">>", "<<");
     measure.showPolygonDirection(false);
     measure.showPolygonDistance(false);
@@ -132,7 +133,7 @@ function onMapLoad(map: maplibregl.Map) {
 }
 
 function handleRadioClick(measureType: TDrawGeometryType) {
-    measure.start(measureType);
+    drawer.start(measureType);
     value.value = measureType;
 }
 

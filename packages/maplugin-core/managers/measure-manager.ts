@@ -64,6 +64,8 @@ export class MeasureManager {
     constructor(dataSource: DrawManager | GeoJSONLayerManagerBase, options: MeasureOptions = {}) {
         this.glManager = dataSource instanceof DrawManager ? dataSource.glManager : dataSource;
 
+        // 清空自定义数据
+        this.glManager.on('clear', () => this.customFeatures = []);
         this.glManager.on('all', () => this.renderMeasure());
 
         this.glManager.addLayer(this.id_layer_measure_symbol);

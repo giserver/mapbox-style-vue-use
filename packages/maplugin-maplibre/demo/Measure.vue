@@ -84,7 +84,7 @@
 
 <script setup lang="ts">
 import Map from './Map.vue';
-import { GeoJSONLayerManager, MeasureManager, TEditorGeometryType, TIdentityGeoJSONFeature, Units } from '../index';
+import { GeoJSONLayerManager, MeasureManager, TDrawGeometryType, TIdentityGeoJSONFeature, Units } from '../index';
 import { ref, watch } from 'vue';
 
 const value = ref("");
@@ -131,7 +131,7 @@ function onMapLoad(map: maplibregl.Map) {
     measure.showSegment(false);
 }
 
-function handleRadioClick(measureType: TEditorGeometryType) {
+function handleRadioClick(measureType: TDrawGeometryType) {
     measure.start(measureType);
     value.value = measureType;
 }

@@ -45,8 +45,8 @@ function handleMapLoaded(map: maplibregl.Map) {
     });
 
     createMapControl(map, ShowEditorButton);
-    createMapControl(map, Drawer, { drawManager: new DrawManager(glManager, {}) });
-    createMapControl(map, Measurer, { measureManager: new MeasureManager(glManager, {}) });
+    createMapControl(map, Drawer, { drawManager: new DrawManager(glManager, {}) }, 'top-left');
+    createMapControl(map, Measurer, { measureManager: new MeasureManager(glManager, {}) }, 'top-left');
 }
 
 function createMapControl(map: maplibregl.Map, component: Component, data?: Record<string, unknown>, position: maplibregl.ControlPosition = 'top-right') {

@@ -19,6 +19,8 @@ import { DrawManager, GeoJSONLayerManager, MeasureManager } from '../../packages
 import { TIdentityGeoJSONFeature } from '../../packages/maplugin-core/types';
 import { StoreEditor } from './stores';
 
+import img_marker from './assets/map-marker.png?url';
+
 const fc = ref<GeoJSON.FeatureCollection>({
     type: 'FeatureCollection',
     features: []
@@ -43,9 +45,19 @@ function handleMapLoaded(map: maplibregl.Map) {
     glManager.on('all', () => {
         fc.value = glManager.fc;
     });
+    const drawManager = new DrawManager(glManager, {});
+
+    map.loadImage(img_marker).then((img) => {
+        map.addImage("marker", img.data);
+
+        map.getLayerProxy<maplibregl.CircleLayerSpecification>(drawManager.id_layer_point).value.layout!['visibility'] = 'none';
+        const layout = map.getLayerProxy<maplibregl.SymbolLayerSpecification>(drawManager.id_layer_point_symbol).value.layout!;
+        layout['icon-image'] = 'marker'
+        layout['icon-size'] = 0.5;
+    });
 
     createMapControl(map, ShowEditorButton);
-    createMapControl(map, Drawer, { drawManager: new DrawManager(glManager, {}) }, 'top-left');
+    createMapControl(map, Drawer, { drawManager }, 'top-left');
     createMapControl(map, Measurer, { measureManager: new MeasureManager(glManager, {}) }, 'top-left');
 }
 

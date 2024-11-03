@@ -3,9 +3,7 @@
 </template>
 
 <script setup lang="ts">
-//@ts-ignore
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-//@ts-ignore
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import * as monaco from 'monaco-editor'
 import geojson_schema from '../../contracts/geojson-schema.json';

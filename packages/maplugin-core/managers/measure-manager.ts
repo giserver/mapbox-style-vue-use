@@ -1,5 +1,5 @@
 import booleanClockwise from '@turf/boolean-clockwise';
-import { DrawManager, DrawOptions } from './geojson-draw-manager';
+import { DrawManager } from './geojson-draw-manager';
 import { GeoJSONLayerManagerBase } from './geojson-layer-manager';
 import { Units, Measurement, Tools } from '../utils';
 import { TIdentityGeoJSONFeature } from '../types';
@@ -9,24 +9,12 @@ type TMeasureUnits = {
     length: Units.TUnitsLength | "MKM",
 }
 
-interface MeasureOptions extends DrawOptions {
+interface MeasureOptions {
 }
 
-export class MeasureManager extends DrawManager {
-    /**
-     * 测量id
-     * 
-     * 用于创建标注文字id
-     */
-    readonly id_layer_measure_symbol = Tools.uuid();
+export class MeasureManager {
 
-    /**
-     * 面方向图层id
-     * 
-     * 用于创建面方向layer和source
-     */
-    readonly id_layer_polygon_clockwise = Tools.uuid();
-
+    private glManager: GeoJSONLayerManagerBase;
 
     private customFeatures: TIdentityGeoJSONFeature[] = [];
 
@@ -46,6 +34,20 @@ export class MeasureManager extends DrawManager {
     private polygonDistance: boolean = true;
 
     /**
+ * 测量id
+ * 
+ * 用于创建标注文字id
+ */
+    readonly id_layer_measure_symbol = Tools.uuid();
+
+    /**
+     * 面方向图层id
+     * 
+     * 用于创建面方向layer和source
+     */
+    readonly id_layer_polygon_clockwise = Tools.uuid();
+
+    /**
      * 长度单位
      */
     get unitsLength() {
@@ -59,17 +61,18 @@ export class MeasureManager extends DrawManager {
         return this.units.area;
     }
 
-    constructor(glManager: GeoJSONLayerManagerBase, options: MeasureOptions) {
-        super(glManager, options);
-        glManager.on('all', () => this.renderMeasure());
+    constructor(dataSource: DrawManager | GeoJSONLayerManagerBase, options: MeasureOptions = {}) {
+        this.glManager = dataSource instanceof DrawManager ? dataSource.glManager : dataSource;
 
-        glManager.addLayer(this.id_layer_measure_symbol);
-        glManager.addLayer(this.id_layer_polygon_clockwise);
+        this.glManager.on('all', () => this.renderMeasure());
+
+        this.glManager.addLayer(this.id_layer_measure_symbol);
+        this.glManager.addLayer(this.id_layer_polygon_clockwise);
 
         /**
          * 添加测量数值图层
          */
-        glManager.map.addLayer({
+        this.glManager.map.addLayer({
             id: this.id_layer_measure_symbol,
             type: 'symbol',
             source: {
@@ -94,7 +97,7 @@ export class MeasureManager extends DrawManager {
         /**
          * 添加面方向图层
          */
-        glManager.map.addLayer({
+        this.glManager.map.addLayer({
             id: this.id_layer_polygon_clockwise,
             type: 'symbol',
             source: {
@@ -234,15 +237,6 @@ export class MeasureManager extends DrawManager {
     showSegment(val: boolean) {
         this.glManager.map.setFilter(this.id_layer_measure_symbol,
             val ? undefined : ['!', ['boolean', ['get', 'center'], false]]);
-    }
-
-    /**
-     * 清除测量数据
-     */
-    clear() {
-        super.clear();
-        this.customFeatures = [];
-        this.renderMeasure();
     }
 
     /**

@@ -29,7 +29,7 @@ export class DrawManager {
     /**
      *
      */
-    constructor(protected glManager: GeoJSONLayerManagerBase, private options: DrawOptions) {
+    constructor(public glManager: GeoJSONLayerManagerBase, private options: DrawOptions = {}) {
         //#region add layers
 
         glManager.addLayer({
@@ -114,6 +114,13 @@ export class DrawManager {
             }
         });
 
+        glManager.on('clear', () => {
+            ((glManager.map as any).getSource(this.id_layer_polygon_subline)).setData({
+                type: 'FeatureCollection',
+                features: []
+            });
+        });
+
         //#endregion
 
         this.escOnce = (e: KeyboardEvent) => {
@@ -169,11 +176,6 @@ export class DrawManager {
 
     clear(): void {
         this.glManager.clear();
-
-        ((this.glManager.map as any).getSource(this.id_layer_polygon_subline)).setData({
-            type: 'FeatureCollection',
-            features: []
-        });
     }
 
     private drawPoint() {

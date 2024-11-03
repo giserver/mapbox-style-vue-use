@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <Map class="map" :onMapLoad="handleMapLoaded"></Map>
-        <div class="editor">
+        <div class="editor" :class="{ hidden: !StoreEditor.show.value }">
             <FeatureCollectionEditor :fc="fc"></FeatureCollectionEditor>
         </div>
     </div>
@@ -10,17 +10,20 @@
 <script setup lang="ts">
 import { Component, createApp, ref } from 'vue';
 import Map from '../../packages/maplugin-maplibre/demo/Map.vue';
-import Drawer from '../components/features/Drawer.vue';
-import Measurer from '../components/features/Measurer.vue';
-import FeatureCollectionEditor from '../components/features/FeatureCollectionEditor.vue';
+import Drawer from './components/features/Drawer.vue';
+import Measurer from './components/features/Measurer.vue';
+import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
+import ShowEditorButton from './components/features/ShowEditorButton.vue';
 
 import { DrawManager, GeoJSONLayerManager, MeasureManager } from '../../packages/maplugin-maplibre';
 import { TIdentityGeoJSONFeature } from '../../packages/maplugin-core/types';
+import { StoreEditor } from './stores';
 
 const fc = ref<GeoJSON.FeatureCollection>({
     type: 'FeatureCollection',
     features: []
 });
+
 let glManager: GeoJSONLayerManager;
 
 function handleMapLoaded(map: maplibregl.Map) {
@@ -31,6 +34,7 @@ function handleMapLoaded(map: maplibregl.Map) {
         type: 'raster',
         source: {
             type: 'raster',
+            maxzoom: 19,
             tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
         }
     });
@@ -40,6 +44,7 @@ function handleMapLoaded(map: maplibregl.Map) {
         fc.value = glManager.fc;
     });
 
+    createMapControl(map, ShowEditorButton);
     createMapControl(map, Drawer, { drawManager: new DrawManager(glManager, {}) });
     createMapControl(map, Measurer, { measureManager: new MeasureManager(glManager, {}) });
 }
@@ -76,5 +81,9 @@ function createMapControl(map: maplibregl.Map, component: Component, data?: Reco
 .editor {
     height: 100vh !important;
     width: 30%;
+}
+
+.editor.hidden {
+    display: none;
 }
 </style>

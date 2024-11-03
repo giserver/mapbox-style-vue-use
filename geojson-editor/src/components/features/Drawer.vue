@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import RadioButton from '../base/RadioButton.vue';
-import { DrawManager, TDrawGeometryType } from '../../../packages/maplugin-core';
+import { DrawManager, TDrawGeometryType } from '../../../../packages/maplugin-core';
 import { ref, watch } from 'vue';
 
 const radios: Record<TDrawGeometryType, string> = {

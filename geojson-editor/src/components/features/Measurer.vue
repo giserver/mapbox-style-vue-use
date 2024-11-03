@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { MeasureManager } from '../../../packages/maplugin-core';
+import { MeasureManager } from '../../../../packages/maplugin-core';
 
 const props = defineProps<{
     measureManager: MeasureManager

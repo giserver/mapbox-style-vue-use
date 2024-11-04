@@ -255,8 +255,8 @@ export class DrawManager {
                 this.glManager.deleteById(feature.properties.id);
             }
             else {
+                this.glManager.update(feature);
                 this.options.onDrawed?.call(this, feature);
-
                 if (this.options.once)
                     this.stop();
             }

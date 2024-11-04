@@ -118,16 +118,9 @@ export namespace Measurement {
         value: string,
 
         /**
-         * 是否为中间值
-         * 
-         * 线测量中的线段数据
-         */
-        center?: boolean,
-
-        /**
          * 测量类型
          */
-        type: "point" | "line" | "polygon"
+        type: "point" | "line" | "line-segment" | "polygon" | "polygon-line" | "polygon-line-segment"
     }
 
     type TMeasureMarkerFeature = GeoJSON.Feature<GeoJSON.Point, TMeasureProperties>;
@@ -152,9 +145,9 @@ export namespace Measurement {
          * @param length 长度数值
          * @param index 标点下标
          * @param end 是否为最后一个
-         * @param center 是否为中间数值
+         * @param segment 是否为中间数值
          */
-        format?(length: number, index: number, end: boolean, center: boolean): string,
+        format?(length: number, index: number, end: boolean, segment: boolean): string,
 
         /**
          * 是否包含第一个数值
@@ -180,7 +173,7 @@ export namespace Measurement {
     }
 
     function calPoint(g: GeoJSON.Position, options?: TMeasureCalPointOptions): TMeasureMarkerFeature[] {
-        const value = options?.format?.(g) || `${g[0].toFixed(6)} , ${g[1].toFixed(6)}`;
+        const value = options?.format?.(g) || g[0].toFixed(6) + ',' + g[1].toFixed(6);
         return [{
             type: "Feature",
             geometry: {
@@ -194,7 +187,7 @@ export namespace Measurement {
         }]
     }
 
-    function calLineString(g: GeoJSON.Position[], options?: TMeasureCalLineStringOptions): TMeasureMarkerFeature[] {
+    function calLineString(g: GeoJSON.Position[], options?: TMeasureCalLineStringOptions, isPolygon: boolean = false): TMeasureMarkerFeature[] {
         const ret = new Array<TMeasureMarkerFeature>();
         let sumLength = 0;
 
@@ -203,7 +196,11 @@ export namespace Measurement {
 
             if (i > 0) {
                 const last = g[i - 1];
-                const line: GeoJSON.Feature<GeoJSON.LineString> = { type: 'Feature', geometry: { type: 'LineString', coordinates: [last, current] }, properties: {} };
+                const line: GeoJSON.Feature<GeoJSON.LineString> = {
+                    type: 'Feature',
+                    geometry: { type: 'LineString', coordinates: [last, current] },
+                    properties: {}
+                };
                 const l = length(line.geometry);
                 const c = calCenter(line);
 
@@ -217,8 +214,7 @@ export namespace Measurement {
                     },
                     properties: {
                         value: options?.format?.(l, i, false, true) || `${l.toFixed(2)} m`,
-                        center: true,
-                        type: 'line'
+                        type: isPolygon ? 'polygon-line-segment' : 'line-segment'
                     }
                 });
             }
@@ -234,7 +230,7 @@ export namespace Measurement {
                 },
                 properties: {
                     value: options?.format?.(sumLength, i, i === g.length - 1, false) || `${sumLength.toFixed(2)} m`,
-                    type: 'line'
+                    type: isPolygon ? 'polygon-line' : 'line'
                 }
             });
         }

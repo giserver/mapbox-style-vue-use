@@ -33,12 +33,16 @@ export class MeasureManager {
      */
     private polygonDistance: boolean = true;
 
-    /**
- * 测量id
- * 
- * 用于创建标注文字id
- */
-    readonly id_layer_measure_symbol = Tools.uuid();
+
+    readonly id_source_measure_symbol = Tools.uuid();
+
+
+    readonly id_layer_measrue_point = Tools.uuid();
+    readonly id_layer_measrue_line = Tools.uuid();
+    readonly id_layer_measrue_line_segment = Tools.uuid();
+    readonly id_layer_measrue_polygon = Tools.uuid();
+    readonly id_layer_measrue_polygon_line = Tools.uuid();
+    readonly id_layer_measure_polygon_line_segment = Tools.uuid();
 
     /**
      * 面方向图层id
@@ -68,32 +72,12 @@ export class MeasureManager {
         this.glManager.on('clear', () => this.customFeatures = []);
         this.glManager.on('all', () => this.renderMeasure());
 
-        this.glManager.addLayer(this.id_layer_measure_symbol);
-        this.glManager.addLayer(this.id_layer_polygon_clockwise);
-
         /**
-         * 添加测量数值图层
+         * 添加数据源
          */
-        this.glManager.map.addLayer({
-            id: this.id_layer_measure_symbol,
-            type: 'symbol',
-            source: {
-                type: 'geojson',
-                data: { type: 'FeatureCollection', features: [] }
-            },
-            layout: {
-                "text-field": ['get', 'value'],
-                'text-size': ['case',
-                    ['boolean', ['get', 'center'], false], 12,
-                    ['==', ['get', 'type'], 'Polygon'], 16, 14],
-                'text-offset': [0, -1]
-            },
-            paint: {
-                'text-color': ['case',
-                    ['boolean', ['get', 'center'], false], 'red', 'black'],
-                'text-halo-color': 'white',
-                'text-halo-width': 2
-            }
+        this.glManager.map.addSource(this.id_source_measure_symbol, {
+            type: 'geojson',
+            data: { type: 'FeatureCollection', features: [] }
         });
 
         /**
@@ -119,7 +103,127 @@ export class MeasureManager {
                 'text-halo-width': 3
             },
             filter: ['==', '$type', 'Polygon']
-        }, this.id_layer_measure_symbol);
+        });
+
+        /**
+         * 测量点结果的图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measrue_point,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 14,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'black',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'point']
+        });
+
+        /**
+         * 添加线测量总结果图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measrue_line,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 14,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'black',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'line']
+        });
+
+        /**
+         * 添加线测量线段结果图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measrue_line_segment,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 12,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'red',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'line-segment']
+        });
+
+        /**
+         * 添加面测量结果图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measrue_polygon,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 18,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'black',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'polygon']
+        });
+
+        /**
+         * 添加面测量外侧线结果图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measrue_polygon_line,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 14,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'black',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'polygon-line']
+        });
+
+        /**
+         * 添加面测量外侧线段结果图层
+         */
+        this.glManager.map.addLayer({
+            id: this.id_layer_measure_polygon_line_segment,
+            type: 'symbol',
+            source: this.id_source_measure_symbol,
+            layout: {
+                "text-field": ['get', 'value'],
+                'text-size': 12,
+                'text-offset': [0, -1]
+            },
+            paint: {
+                'text-color': 'red',
+                'text-halo-color': 'white',
+                'text-halo-width': 2
+            },
+            filter: ['==', ['get', 'type'], 'polygon-line-segment']
+        });
 
         this.units = {
             area: 'M2KM2',
@@ -136,8 +240,15 @@ export class MeasureManager {
     }
 
     setVisible(visible: boolean) {
-        this.glManager.map.setLayoutProperty(this.id_layer_measure_symbol, 'visibility', visible ? 'visible' : 'none');
-        this.glManager.map.setLayoutProperty(this.id_layer_polygon_clockwise, 'visibility', visible ? 'visible' : 'none');
+        [this.id_layer_measrue_point,
+        this.id_layer_measrue_line,
+        this.id_layer_measrue_line_segment,
+        this.id_layer_measrue_polygon,
+        this.id_layer_measrue_polygon_line,
+        this.id_layer_measure_polygon_line_segment,
+        this.id_layer_polygon_clockwise].forEach(id => {
+            this.glManager.map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
+        });
     }
 
     /**
@@ -220,7 +331,8 @@ export class MeasureManager {
      * @param val 
      */
     showPolygonDirection(val: boolean) {
-        this.glManager.map.setLayoutProperty(this.id_layer_polygon_clockwise, "visibility", val ? "visible" : 'none');
+        this.glManager.map.setFilter(this.id_layer_polygon_clockwise,
+            val ? ['==', '$type', 'Polygon'] : ['==', '1', '0']);
     }
 
     /**
@@ -237,8 +349,11 @@ export class MeasureManager {
      * @param val 
      */
     showSegment(val: boolean) {
-        this.glManager.map.setFilter(this.id_layer_measure_symbol,
-            val ? undefined : ['!', ['boolean', ['get', 'center'], false]]);
+        this.glManager.map.setFilter(this.id_layer_measrue_line_segment,
+            val ? ['==', ['get', 'type'], 'line-segment'] : ['==', '1', '0']);
+
+        this.glManager.map.setFilter(this.id_layer_measure_polygon_line_segment,
+            val ? ['==', ['get', 'type'], 'polygon-line-segment'] : ['==', '1', '0']);
     }
 
     /**
@@ -248,7 +363,7 @@ export class MeasureManager {
         const features = this.glManager.fc.features.concat(this.customFeatures);
 
         // 设置测量结果数据
-        (this.glManager.map.getSource(this.id_layer_measure_symbol)).setData({
+        (this.glManager.map.getSource(this.id_source_measure_symbol)).setData({
             type: 'FeatureCollection',
             features: Measurement.cal(features, {
                 polygon: {
@@ -299,14 +414,18 @@ export class MeasureManager {
             })
         });
 
-        // 设置方向数据
+        // 设置面方向数据
         (this.glManager.map.getSource(this.id_layer_polygon_clockwise)).setData({
             type: 'FeatureCollection',
-            features: features.map(x => {
-                if (x.geometry.type === 'Polygon') {
-                    (x.properties as any).clockwise = booleanClockwise(x.geometry.coordinates[0]);
+            features: features.filter(x => x.geometry.type === 'Polygon').map(x => {
+                return {
+                    type: 'Feature',
+                    geometry: x.geometry,
+                    properties: {
+                        ...x.properties,
+                        clockwise: booleanClockwise((x.geometry as any).coordinates[0])
+                    }
                 }
-                return x;
             })
         });
     }

@@ -61,18 +61,25 @@ function handleMapLoaded(map: maplibregl.Map) {
         layout['icon-anchor'] = 'bottom';
     });
 
-    map.on('click', drawManager.id_layer_polygon, ({ features }) => {
-        if (drawManager.drawing || !features || features.length === 0) return;
-        const f = glManager.query((features[0].properties as any)['id']);
-        if (f) {
-            glManager.setFeatureHidden(f.properties.id);
-            vertexEditor.setFeature(f, feature => {
-
-                glManager.clearFeatureHidden();
-                glManager.update(feature);
-            });
-        }
-    });
+    map.on('click', [
+        drawManager.id_layer_polygon,
+        drawManager.id_layer_polygon_circle,
+        drawManager.id_layer_polygon_outline,
+        drawManager.id_layer_line,
+        drawManager.id_layer_line_circle,
+        drawManager.id_layer_point,
+        drawManager.id_layer_point_symbol], ({ features }) => {
+            if (drawManager.drawing || !features || features.length === 0) return;
+            const f = glManager.query((features[0].properties as any)['id']);
+            if (f) {
+                glManager.setFeatureHidden(f.properties.id);
+                vertexEditor.setFeature(f, g => {
+                    glManager.clearFeatureHidden();
+                    f.geometry = g;
+                    glManager.update(f);
+                });
+            }
+        });
 
     createMapControl(map, ShowEditorButton);
     createMapControl(map, Drawer, { drawManager }, 'top-left');

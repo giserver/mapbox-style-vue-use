@@ -34,16 +34,30 @@ export class VertexEditor {
             }
         }
         MapboxDraw.modes.simple_select.onTrash = function (this, _) { }
+
+        const time = setInterval(() => {
+            ["gl-draw-line-inactive.cold", "gl-draw-polygon-stroke-inactive.cold", "gl-draw-polygon-fill-inactive.cold"].forEach(x => {
+                if (map.getLayer(x)) {
+                    map.setLayoutProperty(x, "visibility", "none");
+                    clearInterval(time);
+                }
+            });
+        }, 400);
     }
 
-    setFeature(feature: TIdentityGeoJSONFeature, onChange: (feature: TIdentityGeoJSONFeature) => void) {
-        const fId = feature.properties.id;
-        feature.id = fId;
-        const geometryCopy = JSON.stringify(feature.geometry);
+    setFeature<TF extends TIdentityGeoJSONFeature>(feature: TF, onDone: (geometry: TF['geometry']) => void) {
+        const fId = '1';
 
         // 编辑器重置数据
         const editor = this.editor;
-        editor.set({ type: 'FeatureCollection', "features": [feature] });
+        editor.set({
+            type: 'FeatureCollection', "features": [{
+                type: 'Feature',
+                id: fId,
+                geometry: feature.geometry,
+                properties: {}
+            }]
+        });
 
         if (feature.geometry.type === 'Point')
             editor.changeMode('simple_select', { featureIds: [fId] })
@@ -55,10 +69,7 @@ export class VertexEditor {
 
             // 当前选择图形失去选择状态 完成修改
             if (e.features.length === 0 && cFeature) {
-                // 若发生改变
-                if (geometryCopy === JSON.stringify(cFeature.geometry)) {
-                    onChange(cFeature as TIdentityGeoJSONFeature);
-                }
+                onDone(cFeature.geometry);
 
                 // 删除编辑数据
                 this.map.off('draw.selectionchange', handleSelectChange);

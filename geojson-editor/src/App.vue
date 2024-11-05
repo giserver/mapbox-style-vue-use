@@ -15,7 +15,7 @@ import Measurer from './components/features/Measurer.vue';
 import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 
-import { DrawManager, GeoJSONLayerManager, MeasureManager , TIdentityGeoJSONFeature, MiddleButtonRoate} from '../../packages/maplugin-maplibre';
+import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
 
 import img_marker from './assets/map-marker.png?url';
@@ -47,6 +47,7 @@ function handleMapLoaded(map: maplibregl.Map) {
     });
     const drawManager = new DrawManager(glManager);
     const measureManager = new MeasureManager(glManager);
+    const vertexEditor = new VertexEditor(map);
 
     map.loadImage(img_marker).then((img) => {
         map.addImage("marker", img.data);
@@ -58,6 +59,19 @@ function handleMapLoaded(map: maplibregl.Map) {
         layout['icon-image'] = 'marker'
         layout['icon-size'] = 0.3;
         layout['icon-anchor'] = 'bottom';
+    });
+
+    map.on('click', drawManager.id_layer_polygon, ({ features }) => {
+        if (drawManager.drawing || !features || features.length === 0) return;
+        const f = glManager.query((features[0].properties as any)['id']);
+        if (f) {
+            glManager.setFeatureHidden(f.properties.id);
+            vertexEditor.setFeature(f, feature => {
+
+                glManager.clearFeatureHidden();
+                glManager.update(feature);
+            });
+        }
     });
 
     createMapControl(map, ShowEditorButton);

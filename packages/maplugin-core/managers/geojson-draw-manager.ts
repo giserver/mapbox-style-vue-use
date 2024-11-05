@@ -26,6 +26,10 @@ export class DrawManager {
 
     private escOnce: (e: KeyboardEvent) => void;
 
+    private _drawing = false;
+
+    get drawing(): boolean { return this._drawing; }
+
     /**
      *
      */
@@ -143,6 +147,7 @@ export class DrawManager {
 
     start(mode: TDrawGeometryType) {
         this.stop();
+        this._drawing = true;
         (this.glManager.map as any).doubleClickZoom.disable();
 
         if (mode === 'Point')
@@ -172,6 +177,8 @@ export class DrawManager {
         this.stopFunc = undefined;
 
         window.removeEventListener('keypress', this.escOnce);
+
+        this._drawing = false;
     }
 
     clear(): void {

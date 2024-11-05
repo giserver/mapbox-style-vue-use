@@ -162,7 +162,8 @@ export abstract class GeoJSONLayerManagerBase<TMap extends IMap = IMap, TFeature
      */
     clearFeatureHidden(...id: string[]) {
         const fs = new Array<TFeature>();
-        if (id.length === 0)
+
+        if (id.length !== 0)
             id.forEach(i => {
                 const f = this.hiddenData.get(i);
                 if (!f) return;

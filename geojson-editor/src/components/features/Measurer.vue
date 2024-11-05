@@ -14,10 +14,12 @@
                 <div class="measure-properties-controls visible" v-show="currentTab === 'visible'">
                     <div>面线段方向</div>
                     <input type="checkbox" v-model="direction">
+                    <div>面线距离</div>
+                    <input type="checkbox" v-model="polygonLine">
                     <div>面线段距离</div>
-                    <input type="checkbox" v-model="distance">
+                    <input type="checkbox" v-model="polygonLineSegment">
                     <div>线段距离</div>
-                    <input type="checkbox" v-model="centerDistance">
+                    <input type="checkbox" v-model="lineSegment">
                 </div>
 
                 <div class="measure-properties-controls" v-show="currentTab === 'units'">
@@ -87,14 +89,19 @@ watch(direction, a => {
     props.measureManager.showPolygonDirection(a);
 });
 
-const distance = ref(true);
-watch(distance, a => {
-    props.measureManager.showPolygonDistance(a);
+const polygonLine = ref(true);
+watch(polygonLine, a => {
+    props.measureManager.showPolygonLine(a);
 });
 
-const centerDistance = ref(true);
-watch(centerDistance, a => {
-    props.measureManager.showSegment(a);
+const polygonLineSegment = ref(true);
+watch(polygonLineSegment, a => {
+    props.measureManager.showPolygonLineSegment(a);
+});
+
+const lineSegment = ref(true);
+watch(lineSegment, a => {
+    props.measureManager.showLineSegment(a);
 });
 
 const areaUnit = ref<Units.TUnitsArea | 'M2KM2'>("M2KM2");

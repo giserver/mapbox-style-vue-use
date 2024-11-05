@@ -133,7 +133,7 @@ export namespace Measurement {
          * 经纬度格式化
          * @param position 经纬度 lng=position[0] lat=position[1]
          */
-        format?(position: GeoJSON.Position): string
+        format(position: GeoJSON.Position): string
     }
 
     /**
@@ -147,7 +147,7 @@ export namespace Measurement {
          * @param end 是否为最后一个
          * @param segment 是否为中间数值
          */
-        format?(length: number, index: number, end: boolean, segment: boolean): string,
+        format(length: number, index: number, end: boolean, segment: boolean): string,
 
         /**
          * 是否包含第一个数值
@@ -158,22 +158,22 @@ export namespace Measurement {
     }
 
     type TMeasureCalPolygonOptions = {
-        format?(area: number): string,
+        format(area: number): string,
         withLineString?: boolean,
-        measureLineStringOptions?: TMeasureCalLineStringOptions,
+        measureLineStringOptions: TMeasureCalLineStringOptions,
     }
 
     /**
      * 测量计算参数
      */
-    type TMeasureCalOptions = {
-        point?: TMeasureCalPointOptions,
-        lineString?: TMeasureCalLineStringOptions,
-        polygon?: TMeasureCalPolygonOptions
+    export type TMeasureCalOptions = {
+        point: TMeasureCalPointOptions,
+        lineString: TMeasureCalLineStringOptions,
+        polygon: TMeasureCalPolygonOptions
     }
 
-    function calPoint(g: GeoJSON.Position, options?: TMeasureCalPointOptions): TMeasureMarkerFeature[] {
-        const value = options?.format?.(g) || g[0].toFixed(6) + ',' + g[1].toFixed(6);
+    function calPoint(g: GeoJSON.Position, options: TMeasureCalPointOptions): TMeasureMarkerFeature[] {
+        const value = options.format(g);
         return [{
             type: "Feature",
             geometry: {
@@ -187,7 +187,7 @@ export namespace Measurement {
         }]
     }
 
-    function calLineString(g: GeoJSON.Position[], options?: TMeasureCalLineStringOptions, isPolygon: boolean = false): TMeasureMarkerFeature[] {
+    function calLineString(g: GeoJSON.Position[], options: TMeasureCalLineStringOptions, isPolygon: boolean = false): TMeasureMarkerFeature[] {
         const ret = new Array<TMeasureMarkerFeature>();
         let sumLength = 0;
 
@@ -213,7 +213,7 @@ export namespace Measurement {
                         coordinates: c.geometry.coordinates
                     },
                     properties: {
-                        value: options?.format?.(l, i, false, true) || `${l.toFixed(2)} m`,
+                        value: options.format(l, i, false, true),
                         type: isPolygon ? 'polygon-line-segment' : 'line-segment'
                     }
                 });
@@ -229,7 +229,7 @@ export namespace Measurement {
                     coordinates: current
                 },
                 properties: {
-                    value: options?.format?.(sumLength, i, i === g.length - 1, false) || `${sumLength.toFixed(2)} m`,
+                    value: options.format(sumLength, i, i === g.length - 1, false),
                     type: isPolygon ? 'polygon-line' : 'line'
                 }
             });
@@ -238,12 +238,12 @@ export namespace Measurement {
         return ret;
     }
 
-    function calPolygon(g: GeoJSON.Position[][], options?: TMeasureCalPolygonOptions): TMeasureMarkerFeature[] {
+    function calPolygon(g: GeoJSON.Position[][], options: TMeasureCalPolygonOptions): TMeasureMarkerFeature[] {
         const ret = new Array<TMeasureMarkerFeature>();
 
         if (options?.withLineString !== false) {
             g.forEach(x => {
-                ret.push(...calLineString(x, options?.measureLineStringOptions));
+                ret.push(...calLineString(x, options.measureLineStringOptions, true));
             });
         }
 
@@ -259,7 +259,7 @@ export namespace Measurement {
                     coordinates: center.geometry.coordinates
                 },
                 properties: {
-                    value: options?.format?.(a) || `${a.toFixed(2)} m²`,
+                    value: options.format(a),
                     type: 'polygon'
                 }
             })
@@ -268,10 +268,10 @@ export namespace Measurement {
         return ret;
     }
 
-    function calGeometry(g: GeoJSON.Geometry, options?: TMeasureCalOptions): TMeasureMarkerFeature[] {
-        if (g.type === 'Point') return calPoint(g.coordinates, options?.point);
-        if (g.type === 'LineString') return calLineString(g.coordinates, options?.lineString);
-        if (g.type === 'Polygon') return calPolygon(g.coordinates, options?.polygon);
+    function calGeometry(g: GeoJSON.Geometry, options: TMeasureCalOptions): TMeasureMarkerFeature[] {
+        if (g.type === 'Point') return calPoint(g.coordinates, options.point);
+        if (g.type === 'LineString') return calLineString(g.coordinates, options.lineString);
+        if (g.type === 'Polygon') return calPolygon(g.coordinates, options.polygon);
 
         function calMulGeometry<T>(data: Array<T>, cal: (d: T, options?: any) => TMeasureMarkerFeature[], options: any): TMeasureMarkerFeature[] {
             return data.reduce((p, c) => {
@@ -279,9 +279,9 @@ export namespace Measurement {
             }, new Array<TMeasureMarkerFeature>());
         }
 
-        if (g.type === 'MultiPoint') return calMulGeometry(g.coordinates, calPoint, options?.point);
-        if (g.type === 'MultiLineString') return calMulGeometry(g.coordinates, calLineString, options?.lineString);
-        if (g.type === 'MultiPolygon') return calMulGeometry(g.coordinates, calPolygon, options?.polygon);
+        if (g.type === 'MultiPoint') return calMulGeometry(g.coordinates, calPoint, options.point);
+        if (g.type === 'MultiLineString') return calMulGeometry(g.coordinates, calLineString, options.lineString);
+        if (g.type === 'MultiPolygon') return calMulGeometry(g.coordinates, calPolygon, options.polygon);
 
         throw new Error(`not suppose geometry type: ${g.type} to measure`);
     }
@@ -292,7 +292,7 @@ export namespace Measurement {
      * @param options 计算参数
      * @returns 
      */
-    export function cal(data: GeoJSON.Feature | GeoJSON.Feature[] | GeoJSON.Geometry, options?: TMeasureCalOptions) {
+    export function cal(data: GeoJSON.Feature | GeoJSON.Feature[] | GeoJSON.Geometry, options: TMeasureCalOptions) {
         if (data instanceof Array) {
             return data.reduce((p, c) => {
                 const features = calGeometry(c.geometry, options);

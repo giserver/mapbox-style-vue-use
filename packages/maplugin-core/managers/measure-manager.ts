@@ -10,6 +10,12 @@ type TMeasureUnits = {
 }
 
 interface MeasureOptions {
+    formats: {
+        point: (coord: GeoJSON.Position) => string,
+        line: (length: number, units: Units.TUnitsLength, index: number, end: boolean, segment: boolean) => string,
+        polygon: (area: number, units: Units.TUnitsArea) => string,
+        'polygon-line': (length: number, units: Units.TUnitsLength, index: number, end: boolean, segment: boolean) => string,
+    }
 }
 
 export class MeasureManager {
@@ -27,11 +33,6 @@ export class MeasureManager {
      * 不同单位的精度，执行number类型的toFix(precisions)方法
      */
     private precisions: Map<Units.TUnitsLength | Units.TUnitsArea, number>;
-
-    /**
-     * 是否进行面边界线的测量
-     */
-    private polygonDistance: boolean = true;
 
 
     readonly id_source_measure_symbol = Tools.uuid();
@@ -65,7 +66,25 @@ export class MeasureManager {
         return this.units.area;
     }
 
-    constructor(dataSource: DrawManager | GeoJSONLayerManagerBase, options: MeasureOptions = {}) {
+    constructor(dataSource: DrawManager | GeoJSONLayerManagerBase, private options: MeasureOptions = {
+        formats: {
+            point: p => {
+                return `${p[0].toFixed(6)},${p[1].toFixed(6)}`;
+            },
+            line: (len, units) => {
+                const val = len.toFixed(this.precisions.get(units)) + ` ${Units.unitsLengthDescriptions.find(x => x.value === units)?.label}`;
+                return val;
+            },
+            polygon: (area, units) => {
+                const val = area.toFixed(this.precisions.get(units)) + ` ${Units.unitsAreaDescriptions.find(x => x.value === units)?.label}`;
+                return val;
+            },
+            "polygon-line": (len, units, _, end) => {
+                const val = len.toFixed(this.precisions.get(units)) + ` ${Units.unitsLengthDescriptions.find(x => x.value === units)?.label}`;
+                return end ? `终点: ${val}` : val;
+            }
+        }
+    }) {
         this.glManager = dataSource instanceof DrawManager ? dataSource.glManager : dataSource;
 
         // 清空自定义数据
@@ -336,24 +355,30 @@ export class MeasureManager {
     }
 
     /**
-     * 是否显示面的长度数据（边界线的测量）
+     * 显示面线数据
      * @param val 
      */
-    showPolygonDistance(val: boolean) {
-        this.polygonDistance = val;
-        this.renderMeasure();
+    showPolygonLine(val: boolean) {
+        this.glManager.map.setFilter(this.id_layer_measrue_polygon_line,
+            val ? ['==', ['get', 'type'], 'polygon-line'] : ['==', '1', '0']);
     }
 
     /**
-     * 显示段数据
+     * 显示面线段数据
      * @param val 
      */
-    showSegment(val: boolean) {
-        this.glManager.map.setFilter(this.id_layer_measrue_line_segment,
-            val ? ['==', ['get', 'type'], 'line-segment'] : ['==', '1', '0']);
-
+    showPolygonLineSegment(val: boolean) {
         this.glManager.map.setFilter(this.id_layer_measure_polygon_line_segment,
             val ? ['==', ['get', 'type'], 'polygon-line-segment'] : ['==', '1', '0']);
+    }
+
+    /**
+     * 显示线线段数据
+     * @param val 
+     */
+    showLineSegment(val: boolean) {
+        this.glManager.map.setFilter(this.id_layer_measrue_line_segment,
+            val ? ['==', ['get', 'type'], 'line-segment'] : ['==', '1', '0']);
     }
 
     /**
@@ -369,7 +394,7 @@ export class MeasureManager {
                 polygon: {
                     measureLineStringOptions: {
                         withStart: false,
-                        format: (len, i, end, center) => {
+                        format: (len, i, end, segment) => {
                             let units = this.units.length;
 
                             if (units === 'MKM')
@@ -377,11 +402,11 @@ export class MeasureManager {
                                 else units = 'M';
 
                             len = Units.convertLength(len, 'M', units);
-                            const val = len.toFixed(this.precisions.get(units)) + ` ${Units.unitsLengthDescriptions.find(x => x.value === units)?.label}`;
-                            return end ? `终点: ${val}` : val;
+
+                            return this.options.formats['polygon-line'](len, units, i, end, segment);
                         }
                     },
-                    withLineString: this.polygonDistance,
+                    withLineString: true,
                     format: area => {
                         let units = this.units.area;
 
@@ -391,8 +416,7 @@ export class MeasureManager {
 
                         area = Units.convertArea(area, 'M2', units);
 
-                        const val = area.toFixed(this.precisions.get(units)) + ` ${Units.unitsAreaDescriptions.find(x => x.value === units)?.label}`;
-                        return val;
+                        return this.options.formats.polygon(area, units);
                     }
                 },
                 lineString: {
@@ -405,11 +429,14 @@ export class MeasureManager {
                             else units = 'M';
 
                         len = Units.convertLength(len, 'M', units);
-                        const val = len.toFixed(this.precisions.get(units)) + ` ${Units.unitsLengthDescriptions.find(x => x.value === units)?.label}`;
-                        return val;
+                        
+                        return this.options.formats.line(len, units, i, end, center);
                     }
                 },
                 point: {
+                    format: p => {
+                        return this.options.formats.point(p);
+                    }
                 }
             })
         });

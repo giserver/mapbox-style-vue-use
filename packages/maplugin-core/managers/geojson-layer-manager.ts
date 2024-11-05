@@ -3,18 +3,18 @@ import { Tools } from "../utils/tools";
 
 export type TFeatureEvent = "all" | "add" | "update" | "delete" | "clear" | "destory";
 
-export interface GeoJSONLayerManagerOptions<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
-    map: IMap;
+export interface GeoJSONLayerManagerOptions<TMap extends IMap = IMap, TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
+    map: TMap;
     data: Array<TFeature>;
 }
 
-export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
+export abstract class GeoJSONLayerManagerBase<TMap extends IMap = IMap, TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature> {
     private events = new Map<string, Array<(e: { features?: TFeature[] }) => void>>();
     protected readonly layers = new Array<string>();
     protected data = new Map<string, TFeature>();
     protected hiddenData = new Map<string, TFeature>();
 
-    readonly map: IMap;
+    readonly map: TMap;
     readonly source: string = Tools.uuid();
 
     /**
@@ -27,7 +27,7 @@ export abstract class GeoJSONLayerManagerBase<TFeature extends TIdentityGeoJSONF
         } as Readonly<GeoJSON.FeatureCollection>;
     }
 
-    constructor(options: GeoJSONLayerManagerOptions<TFeature>) {
+    constructor(options: GeoJSONLayerManagerOptions<TMap, TFeature>) {
         this.map = options.map;
         options.data.forEach(f => {
             this.data.set(f.properties.id, f);

@@ -1,7 +1,7 @@
 import { GeoJSONLayerManagerBase, TFeatureEvent, TIdentityGeoJSONFeature } from '../maplugin-core';
 
 export class GeoJSONLayerManager<TFeature extends TIdentityGeoJSONFeature = TIdentityGeoJSONFeature>
-    extends GeoJSONLayerManagerBase<TFeature> {
+    extends GeoJSONLayerManagerBase<maplibregl.Map, TFeature> {
 
     /**
      *

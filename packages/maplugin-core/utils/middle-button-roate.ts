@@ -244,9 +244,9 @@ export class MiddleButtonRoate {
 
         const element = map.getContainer();
         this.map = map;
-        this.mouseRotate = new MouseRotateHandler({ clickTolerance: (map.dragRotate as any)._mouseRotate._clickTolerance });
+        this.mouseRotate = new MouseRotateHandler({ clickTolerance: ((map as any).dragRotate as any)._mouseRotate._clickTolerance });
         if (options.withPitch)
-            this.mousePitch = new MousePitchHandler({ clickTolerance: (map.dragRotate as any)._mousePitch._clickTolerance });
+            this.mousePitch = new MousePitchHandler({ clickTolerance: ((map as any).dragRotate as any)._mousePitch._clickTolerance });
 
         const mousemove = (e: MouseEvent) => {
             this.move(e, DOM.mousePos(element, e));

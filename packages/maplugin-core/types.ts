@@ -1,7 +1,6 @@
 export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load' | 'draw.selectionchange';
 
 export interface IMap {
-    dragRotate: number,
     getContainer(): HTMLElement,
 
     getStyle(): any;

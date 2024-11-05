@@ -15,8 +15,7 @@ import Measurer from './components/features/Measurer.vue';
 import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 
-import { DrawManager, GeoJSONLayerManager, MeasureManager } from '../../packages/maplugin-maplibre';
-import { TIdentityGeoJSONFeature } from '../../packages/maplugin-core/types';
+import { DrawManager, GeoJSONLayerManager, MeasureManager , TIdentityGeoJSONFeature, MiddleButtonRoate} from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
 
 import img_marker from './assets/map-marker.png?url';
@@ -25,8 +24,6 @@ const fc = ref<GeoJSON.FeatureCollection>({
     type: 'FeatureCollection',
     features: []
 });
-
-let glManager: GeoJSONLayerManager;
 
 function handleMapLoaded(map: maplibregl.Map) {
     map.setCenter([121, 31]);
@@ -41,7 +38,10 @@ function handleMapLoaded(map: maplibregl.Map) {
         }
     });
 
-    glManager = new GeoJSONLayerManager(map, new Array<TIdentityGeoJSONFeature>());
+    // 中键旋转
+    new MiddleButtonRoate(map);
+
+    const glManager = new GeoJSONLayerManager(map, new Array<TIdentityGeoJSONFeature>());
     glManager.on('all', () => {
         fc.value = glManager.fc;
     });

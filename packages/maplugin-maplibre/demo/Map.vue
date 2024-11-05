@@ -19,9 +19,10 @@ onMounted(() => {
     container: 'map',
     zoom: 2,
     style: props.style,
-    // attributionControl: false
+    attributionControl: false
   });
-
+  map.addControl(new maplibregl.NavigationControl(),'bottom-right');
+  map.addControl(new maplibregl.ScaleControl(),'bottom-left');
   map.on('load', () => {
     props.onMapLoad(map);
   });

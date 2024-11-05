@@ -46,11 +46,14 @@ function handleMapLoaded(map: maplibregl.Map) {
         fc.value = glManager.fc;
     });
     const drawManager = new DrawManager(glManager);
+    const measureManager = new MeasureManager(glManager);
 
     map.loadImage(img_marker).then((img) => {
         map.addImage("marker", img.data);
 
         map.getLayerProxy<maplibregl.CircleLayerSpecification>(drawManager.id_layer_point).value.layout!['visibility'] = 'none';
+        map.getLayerProxy<maplibregl.SymbolLayerSpecification>(measureManager.id_layer_measrue_point).value.layout!['text-offset'] = [0, 1];
+
         const layout = map.getLayerProxy<maplibregl.SymbolLayerSpecification>(drawManager.id_layer_point_symbol).value.layout!;
         layout['icon-image'] = 'marker'
         layout['icon-size'] = 0.3;
@@ -59,7 +62,7 @@ function handleMapLoaded(map: maplibregl.Map) {
 
     createMapControl(map, ShowEditorButton);
     createMapControl(map, Drawer, { drawManager }, 'top-left');
-    createMapControl(map, Measurer, { measureManager: new MeasureManager(glManager) }, 'top-left');
+    createMapControl(map, Measurer, { measureManager }, 'top-left');
 }
 
 function createMapControl(map: maplibregl.Map, component: Component, data?: Record<string, unknown>, position: maplibregl.ControlPosition = 'top-right') {

@@ -83,18 +83,6 @@ export class DrawManager {
         });
 
         glManager.addLayer({
-            id: this.id_layer_polygon_circle,
-            type: 'circle',
-            paint: {
-                'circle-color': "#fbb03b",
-                'circle-radius': 5,
-                'circle-stroke-color': '#fff',
-                'circle-stroke-width': 2,
-            },
-            filter: ['==', '$type', 'Polygon']
-        });
-
-        glManager.addLayer({
             id: this.id_layer_polygon_outline,
             type: 'line',
             paint: {
@@ -112,6 +100,18 @@ export class DrawManager {
                 'line-color': "#fbb03b",
                 'line-width': 2,
             }
+        });
+
+        glManager.addLayer({
+            id: this.id_layer_polygon_circle,
+            type: 'circle',
+            paint: {
+                'circle-color': "#fbb03b",
+                'circle-radius': 5,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-width': 2,
+            },
+            filter: ['==', '$type', 'Polygon']
         });
 
         glManager.on('clear', () => {

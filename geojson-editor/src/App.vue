@@ -37,7 +37,7 @@ function handleMapLoaded(map: maplibregl.Map) {
             tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
         }
     });
-    map.doubleClickZoom.disable();
+    
     // 中键旋转
     new MiddleButtonRoate(map);
 

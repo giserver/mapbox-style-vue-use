@@ -31,7 +31,14 @@ export interface IMap {
     setPaintProperty(layerId: string, property: string, value: any): void,
     setLayoutProperty(layerId: string, property: string, value: any): void,
 
-    setFilter(id: string, filter?: any, options?: any): void
+    setFilter(id: string, filter?: any, options?: any): void,
+
+    doubleClickZoom : {
+        enable(): void;
+        disable(): void;
+        isEnabled(): boolean;
+        isActive(): boolean;
+    }
 }
 
 export type TIdentityGeoJSONFeature = GeoJSON.Feature<GeoJSON.Geometry, { id: string }>;

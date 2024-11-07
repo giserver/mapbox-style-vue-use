@@ -8,6 +8,7 @@ export class VertexEditor {
      *
      */
     constructor(private map: IMap) {
+        map.doubleClickZoom.disable();
         // 创建编辑器
         this.editor = new MapboxDraw({
             controls: {
@@ -16,12 +17,14 @@ export class VertexEditor {
             displayControlsDefault: false
         });
         this.editor.onAdd(map as any);
+
         // 禁止图形平移
         const onDrag = MapboxDraw.modes.direct_select.onDrag;
         MapboxDraw.modes.direct_select.onDrag = function (this, state, e) {
             if (state.selectedCoordPaths.length > 0)
                 onDrag?.call(this, state, e);
         };
+        
         // 禁止删除图形
         const directSelectOnTrash = MapboxDraw.modes.direct_select.onTrash;
         MapboxDraw.modes.direct_select.onTrash = function (this, state) {

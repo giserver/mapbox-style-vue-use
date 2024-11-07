@@ -148,7 +148,7 @@ export class DrawManager {
     start(mode: TDrawGeometryType) {
         this.stop();
         this._drawing = true;
-        (this.glManager.map as any).doubleClickZoom.disable();
+        this.glManager.map.doubleClickZoom.disable();
 
         if (mode === 'Point')
             this.stopFunc = this.drawPoint();
@@ -163,8 +163,8 @@ export class DrawManager {
     }
 
     stop() {
-        if ((this.glManager.map as any).doubleClickZoom.isEnabled) {
-            (this.glManager.map as any).doubleClickZoom.enable();
+        if (this.glManager.map.doubleClickZoom.isEnabled()) {
+            this.glManager.map.doubleClickZoom.enable();
         }
 
         if (this.currentFeatureId) {

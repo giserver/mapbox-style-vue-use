@@ -45,11 +45,17 @@ export class VertexEditor {
         }, 400);
     }
 
-    setFeature<TF extends TIdentityGeoJSONFeature>(feature: TF, onDone: (geometry: TF['geometry']) => void) {
-        const fId = '1';
-
-        // 编辑器重置数据
+    setFeature<TF extends TIdentityGeoJSONFeature>(feature: TF, setDone: (id: string, geometry: TF['geometry']) => void) {
+        const fId = feature.properties.id;
         const editor = this.editor;
+
+        // 如果存在数据，清空数据，并设置该数据编辑完成
+        const sFeautre = editor.getAll().features[0];
+        if (sFeautre) {
+            setDone(sFeautre.id! as string, sFeautre.geometry);
+        }
+
+        // 将数据设置到编辑器
         editor.set({
             type: 'FeatureCollection', "features": [{
                 type: 'Feature',
@@ -64,12 +70,13 @@ export class VertexEditor {
         else
             editor.changeMode('direct_select', { featureId: fId });
 
+        // 图形选择发生变化
         const handleSelectChange = (e: any) => {
             const cFeature = editor.get(fId);
 
             // 当前选择图形失去选择状态 完成修改
             if (e.features.length === 0 && cFeature) {
-                onDone(cFeature.geometry);
+                setDone(fId, cFeature.geometry);
 
                 // 删除编辑数据
                 this.map.off('draw.selectionchange', handleSelectChange);

@@ -74,10 +74,13 @@ function handleMapLoaded(map: maplibregl.Map) {
             const f = glManager.query((features[0].properties as any)['id']);
             if (f) {
                 glManager.setFeatureHidden(f.properties.id);
-                vertexEditor.setFeature(f, g => {
-                    glManager.clearFeatureHidden();
-                    f.geometry = g;
-                    glManager.update(f);
+
+                vertexEditor.setFeature(f, (id, g) => {
+                    glManager.clearFeatureHidden(id);
+                    
+                    const featrue = glManager.query(id)!;
+                    featrue.geometry = g;
+                    glManager.update(featrue);
                 });
             }
         });

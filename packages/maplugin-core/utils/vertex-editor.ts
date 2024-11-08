@@ -41,7 +41,7 @@ export class VertexEditor {
 
         // TODO : mapbox-gl-draw 之后会更新调整contracts.classes.CANVASE 数值
         if (Units.isMaplibregl(map)) {
-            window.addEventListener("keydown", e => {
+            map.getCanvas().addEventListener("keydown", e => {
                 if (e.code === "Delete") {
                     this.editor.trash();
                 }

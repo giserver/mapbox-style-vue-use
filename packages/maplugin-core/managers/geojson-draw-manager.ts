@@ -159,7 +159,7 @@ export class DrawManager {
 
         this.glManager.map.getCanvas().style.cursor = 'crosshair';
 
-        window.addEventListener('keydown', this.escOnce);
+        this.glManager.map.getCanvas().addEventListener('keydown', this.escOnce);
     }
 
     stop() {
@@ -176,7 +176,7 @@ export class DrawManager {
         this.glManager.map.getCanvas().style.cursor = '';
         this.stopFunc = undefined;
 
-        window.removeEventListener('keypress', this.escOnce);
+        this.glManager.map.getCanvas().removeEventListener('keypress', this.escOnce);
 
         this._drawing = false;
     }
@@ -317,14 +317,14 @@ export class DrawManager {
 
         map.on('click', clickHandler);
         map.on('dblclick', doubleClickHandler);
-        window.addEventListener('keydown', backKeyHandler);
+        this.glManager.map.getCanvas().addEventListener('keydown', backKeyHandler);
 
         return () => {
             map.off('mousemove', mouseMoveHandler);
             map.off('contextmenu', rightClickHandler);
             map.off('click', clickHandler);
             map.off('dblclick', doubleClickHandler);
-            window.removeEventListener('keydown', backKeyHandler);
+            this.glManager.map.getCanvas().removeEventListener('keydown', backKeyHandler);
         }
     }
 
@@ -470,7 +470,7 @@ export class DrawManager {
 
         map.on('click', clickHandler);
         map.on('dblclick', doubleClickHandler);
-        window.addEventListener("keydown", backKeyHandler);
+        this.glManager.map.getCanvas().addEventListener("keydown", backKeyHandler);
 
         return () => {
             map.off('mousemove', mouseMoveHandler);
@@ -483,7 +483,7 @@ export class DrawManager {
                 features: []
             });
 
-            window.removeEventListener("keydown", backKeyHandler);
+            this.glManager.map.getCanvas().removeEventListener("keydown", backKeyHandler);
         }
     }
 }

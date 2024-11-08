@@ -91,20 +91,21 @@ async function handleDownload() {
             })),
         };
 
+        let writable: FileSystemWritableFileStream | undefined;
         try {
             const handle: FileSystemFileHandle = await (window as any).showSaveFilePicker(opts); // 打开保存文件对话框
-            const writable: FileSystemWritableFileStream = await handle.createWritable(); // 创建可写入的文件对象
+            writable = await handle.createWritable(); // 创建可写入的文件对象
 
             const extension = handle.name.split('.').pop()!;
-            let encode = file_process.find(x => x.extension === `.${extension}`)!.encode;
+            let encode = file_process.find(x => x.extension === `.${extension}`)?.encode;
             if (!encode) encode = file_process.find(x => x.extension === '.geojson')!.encode!;
 
-            writable.write(encode(geojson)).then(()=>{
-                writable.close();
+            writable.write(encode(geojson)).then(() => {
+                writable?.close();
             });
 
         } catch (e) {
-
+            writable?.close();
         }
     }
     else {

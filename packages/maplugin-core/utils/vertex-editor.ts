@@ -1,5 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { IMap, TIdentityGeoJSONFeature } from '../types';
+import { Units } from '../utils';
 
 export class VertexEditor {
     private editor: MapboxDraw;
@@ -24,7 +25,7 @@ export class VertexEditor {
             if (state.selectedCoordPaths.length > 0)
                 onDrag?.call(this, state, e);
         };
-        
+
         // 禁止删除图形
         const directSelectOnTrash = MapboxDraw.modes.direct_select.onTrash;
         MapboxDraw.modes.direct_select.onTrash = function (this, state) {
@@ -37,6 +38,15 @@ export class VertexEditor {
             }
         }
         MapboxDraw.modes.simple_select.onTrash = function (this, _) { }
+
+        // TODO : mapbox-gl-draw 之后会更新调整contracts.classes.CANVASE 数值
+        if (Units.isMaplibregl(map)) {
+            window.addEventListener("keydown", e => {
+                if (e.code === "Delete") {
+                    this.editor.trash();
+                }
+            });
+        }
 
         const time = setInterval(() => {
             ["gl-draw-line-inactive.cold", "gl-draw-polygon-stroke-inactive.cold", "gl-draw-polygon-fill-inactive.cold"].forEach(x => {

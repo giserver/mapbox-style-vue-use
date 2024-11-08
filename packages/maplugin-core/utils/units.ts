@@ -1,4 +1,5 @@
 import { ref, watch } from "vue";
+import { IMap } from '../types';
 
 export namespace Units {
     export type TUnitsLength = "M" | "KM";
@@ -215,6 +216,14 @@ export namespace Units {
     export function useLengthUnits(value: number, units: Units.TUnitsLength, valueUnits?: Units.TUnitsLength) {
         const vu = createUseUnits(Units.convertLength, value, units, valueUnits);
         return { ...vu, unitsDescriptions: Units.unitsLengthDescriptions };
+    }
+
+    export function isMaplibregl(map: IMap) {
+        return map.getCanvas()!.classList.contains("maplibregl-canvas");
+    }
+
+    export function isMapboxgl(map: IMap) {
+        return map.getCanvas()!.classList.contains("mapboxgl-canvas");
     }
 }
 

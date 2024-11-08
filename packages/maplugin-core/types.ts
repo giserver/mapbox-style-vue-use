@@ -1,11 +1,62 @@
-export type TMapEvent = 'click' | 'dblclick' | 'mousemove' | 'contextmenu' | 'zoom' | 'style.load' | 'draw.selectionchange';
+export type TMapEvent =
+    "mousedow" |
+    "mouseup" |
+    "mouseover" |
+    "mouseout" |
+    "mousemove" |
+    "mouseenter" |
+    "mouseleave" |
+    "preclick" |
+    "click" |
+    "dblclick" |
+    "contextmenu" |
+    "touchstart" |
+    "touchend" |
+    "touchcancel" |
+    "wheel" |
+    "resize" |
+    "remove" |
+    "touchmove" |
+    "movestart" |
+    "move" |
+    "moveend" |
+    "dragstart" |
+    "drag" |
+    "dragend" |
+    "zoomstart" |
+    "zoom" |
+    "zoomend" |
+    "rotatestart" |
+    "rotate" |
+    "rotateend" |
+    "pitchstart" |
+    "pitch" |
+    "pitchend" |
+    "boxzoomstart" |
+    "boxzoomend" |
+    "boxzoomcancel" |
+    "webglcontextlost" |
+    "webglcontextrestored" |
+    "load" |
+    "render" |
+    "idle" |
+    "error" |
+    "data" |
+    "styledata" |
+    "sourcedata" |
+    "dataloading" |
+    "styledataloading" |
+    "sourcedataloading" |
+    "styleimagemissing" |
+    "style.load";
 
 export interface IMap {
     getContainer(): HTMLElement,
 
     getStyle(): any;
     setStyle(style: string): any;
-    setCenter(center: [number, number]): void,
+    setCenter(center: [number, number]): void;
+    getCenter(): { lng: number, lat: number };
     setBearing(bearing: number): void;
     getBearing(): number;
     setPitch(pitch: number): void;
@@ -33,7 +84,7 @@ export interface IMap {
 
     setFilter(id: string, filter?: any, options?: any): void,
 
-    doubleClickZoom : {
+    doubleClickZoom: {
         enable(): void;
         disable(): void;
         isEnabled(): boolean;

@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { Component, createApp, ref } from 'vue';
+import { Component, createApp, ref, watch } from 'vue';
 import Map from '../../packages/maplugin-maplibre/demo/Map.vue';
 import Drawer from './components/features/Drawer.vue';
 import Measurer from './components/features/Measurer.vue';
@@ -16,7 +16,7 @@ import FeatureCollectionEditor from './components/features/FeatureCollectionEdit
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 import IO from './components/features/IO.vue';
 
-import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor } from '../../packages/maplugin-maplibre';
+import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor, useCamera } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
 
 import img_marker from './assets/map-marker.png?url';
@@ -26,9 +26,32 @@ const fc = ref<GeoJSON.FeatureCollection>({
     features: []
 });
 
+const { camera, setMap } = useCamera({
+    center: [0, 0],
+    bearing: 0,
+    pitch: 0,
+    zoom: 1
+});
+
+watch(camera, a => {
+    const c = `${a.zoom.toFixed(2)}/${a.center.lng.toFixed(5)}/${a.center.lat.toFixed(5)}/${a.bearing.toFixed(1)}/${a.pitch.toFixed(0)}`;
+    const url = window.location.href.split('#camera=')[0] + "#camera=" + c;
+    history.pushState({}, '', new URL(url));
+});
+
 function handleMapLoaded(map: maplibregl.Map) {
-    map.setCenter([121, 31]);
-    map.setZoom(8);
+    const c = window.location.hash.split('#camera=')[1];
+    if (c) {
+        const [zoom, lng, lat, bearing, pitch] = c.split('/').map(x => parseFloat(x));
+        if (zoom) map.setZoom(zoom);
+        if (lng && lat) map.setCenter([lng, lat]);
+        if (bearing) map.setBearing(bearing);
+        if (pitch) map.setPitch(pitch);
+    }else{
+        map.setCenter([121, 31]);
+        map.setZoom(8);
+    }
+
     map.addLayer({
         id: "world-raster",
         type: 'raster',
@@ -38,6 +61,7 @@ function handleMapLoaded(map: maplibregl.Map) {
             tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
         }
     });
+    setMap(map);
 
     // 中键旋转
     new MiddleButtonRoate(map);

@@ -14,6 +14,7 @@ import Drawer from './components/features/Drawer.vue';
 import Measurer from './components/features/Measurer.vue';
 import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
+import IO from './components/features/IO.vue';
 
 import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
@@ -37,7 +38,7 @@ function handleMapLoaded(map: maplibregl.Map) {
             tiles: ["https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
         }
     });
-    
+
     // 中键旋转
     new MiddleButtonRoate(map);
 
@@ -77,7 +78,7 @@ function handleMapLoaded(map: maplibregl.Map) {
 
                 vertexEditor.setFeature(f, (id, g) => {
                     glManager.clearFeatureHidden(id);
-                    
+
                     const featrue = glManager.query(id)!;
                     featrue.geometry = g;
                     glManager.update(featrue);
@@ -86,6 +87,10 @@ function handleMapLoaded(map: maplibregl.Map) {
         });
 
     createMapControl(map, ShowEditorButton);
+    createMapControl(map, IO, {
+        onUpload: (features: Array<TIdentityGeoJSONFeature>) => glManager.add(...features),
+        onDownload: () => glManager.fc
+    });
     createMapControl(map, Drawer, { drawManager }, 'top-left');
     createMapControl(map, Measurer, { measureManager }, 'top-left');
 }

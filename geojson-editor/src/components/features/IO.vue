@@ -20,59 +20,23 @@
 </template>
 
 <script setup lang="ts">
-import { TIdentityGeoJSONFeature, Tools } from '../../../../packages/maplugin-core';
+import { TIdentityGeoJSONFeature } from '../../../../packages/maplugin-core';
+import FileProcesses from '../../services/file-processes';
 
 const props = defineProps<{
     onUpload(features: Array<TIdentityGeoJSONFeature>): void,
     onDownload(): GeoJSON.FeatureCollection
 }>();
 
-const file_process: Array<{
-    extension: string,
-    description: string,
-    contentType: string
-    decode?(file: File, onFinish: (features: Array<TIdentityGeoJSONFeature>) => void): void,
-    encode?(geojson: GeoJSON.FeatureCollection): string | Blob
-}> = [
-        {
-            extension: ".geojson",
-            description: "geojson",
-            contentType: "application/json",
-            decode(file, onFinish) {
-                const reader = new FileReader();
-
-                reader.onload = e => {
-                    try {
-                        const geojson = JSON.parse(e.target?.result as string) as GeoJSON.FeatureCollection;
-                        geojson.features.forEach(f => {
-                            f.properties ??= {};
-                            if (!f.properties['id']) {
-                                f.properties['id'] = Tools.uuid();
-                            }
-                        });
-                        onFinish(geojson.features as any);
-                    } catch (e) {
-                        alert("geojson文件格式不正确");
-                    }
-                };
-
-                reader.readAsText(file);
-            },
-
-            encode(geojson) {
-                return JSON.stringify(geojson, null, 4);
-            }
-        }
-    ]
-
 function handleUpload() {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = file_process.filter(x => x.encode).map(x => x.extension).join("|");
-    input.onchange = function (e: any) {
+    input.accept = FileProcesses.filter(x => x.decode).map(x => x.extension).join(", ");
+    input.onchange = async function (e: any) {
         const file: File = e.target.files[0];
         const extension = file.name.split('.').pop()!;
-        file_process.find(x => x.extension === `.${extension}`)?.decode?.(file, features => props.onUpload(features));
+        const features = await FileProcesses.find(x => x.extension === `.${extension}`)!.decode!(file);
+        props.onUpload(features);
         input.remove();
     }
     input.click();
@@ -83,7 +47,7 @@ async function handleDownload() {
 
     if ((window as any)['showSaveFilePicker']) {
         const opts = {
-            types: file_process.filter(x => x.encode).map(x => ({
+            types: FileProcesses.filter(x => x.encode).map(x => ({
                 description: x.description,
                 accept: {
                     [x.contentType]: [x.extension]
@@ -97,8 +61,8 @@ async function handleDownload() {
             writable = await handle.createWritable(); // 创建可写入的文件对象
 
             const extension = handle.name.split('.').pop()!;
-            let encode = file_process.find(x => x.extension === `.${extension}`)?.encode;
-            if (!encode) encode = file_process.find(x => x.extension === '.geojson')!.encode!;
+            let encode = FileProcesses.find(x => x.extension === `.${extension}`)?.encode;
+            if (!encode) encode = FileProcesses.find(x => x.extension === '.geojson')!.encode!;
 
             writable.write(encode(geojson)).then(() => {
                 writable?.close();

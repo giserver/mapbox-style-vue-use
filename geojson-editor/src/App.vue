@@ -8,13 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import { Component, createApp, ref, watch } from 'vue';
+import { Component, createApp, h, ref, watch } from 'vue';
 import Map from '../../packages/maplugin-maplibre/demo/Map.vue';
 import Drawer from './components/features/Drawer.vue';
 import Measurer from './components/features/Measurer.vue';
 import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 import IO from './components/features/IO.vue';
+import ExtendPannel from './components/base/ExtendPannel.vue';
 
 import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor, useCamera } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
@@ -47,7 +48,7 @@ function handleMapLoaded(map: maplibregl.Map) {
         if (lng && lat) map.setCenter([lng, lat]);
         if (bearing) map.setBearing(bearing);
         if (pitch) map.setPitch(pitch);
-    }else{
+    } else {
         map.setCenter([121, 31]);
         map.setZoom(8);
     }

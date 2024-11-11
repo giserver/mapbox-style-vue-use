@@ -8,13 +8,13 @@ import { ref } from 'vue';
 const props = defineProps<{
     content: string,
     defaultActive: boolean,
-    onChange: (val: boolean) => void
+    onToggle: (val: boolean) => void
 }>();
 
 const active = ref(props.defaultActive);
 
-function handleClick(v: boolean) {
-    props.onChange(!active.value);
+function handleClick() {
+    props.onToggle(!active.value);
     active.value = !active.value;
 }
 </script>

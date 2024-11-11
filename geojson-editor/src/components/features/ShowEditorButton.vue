@@ -1,5 +1,5 @@
 <template>
-    <ToggleButton content="编辑器" :defaultActive="StoreEditor.show.value" :onChange="v => StoreEditor.showEditor(v)">
+    <ToggleButton content="编辑器" :defaultActive="StoreEditor.show.value" :onToggle="v => StoreEditor.showEditor(v)">
     </ToggleButton>
 </template>
 

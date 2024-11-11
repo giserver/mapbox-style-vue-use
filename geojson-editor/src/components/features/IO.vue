@@ -64,7 +64,8 @@ async function handleDownload() {
             let encode = FileProcesses.find(x => x.extension === `.${extension}`)?.encode;
             if (!encode) encode = FileProcesses.find(x => x.extension === '.geojson')!.encode!;
 
-            writable.write(encode(geojson)).then(() => {
+            const encodeData = await encode(geojson);
+            writable.write(encodeData).then(() => {
                 writable?.close();
             });
 

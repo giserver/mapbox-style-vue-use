@@ -24,6 +24,7 @@
     "proj4": "^2.12.1"
   },
   "devDependencies": {
+    "@mapbox/shp-write": "^0.4.3",
     "@types/geojson": "^7946.0.14",
     "@types/mapbox__mapbox-gl-draw": "^1.4.8",
     "@types/node": "^22.8.6",

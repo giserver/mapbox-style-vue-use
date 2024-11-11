@@ -1,5 +1,6 @@
 import { TIdentityGeoJSONFeature, Tools } from "../../../packages/maplugin-maplibre";
-import shp from "shpjs";
+import shpReader from "shpjs";
+import shpWriter from '@mapbox/shp-write';
 
 function appendId(fc: GeoJSON.FeatureCollection) {
     fc.features.forEach(f => {
@@ -16,7 +17,7 @@ const FileProcesses: Array<{
     description: string,
     contentType: string
     decode?(file: File): Promise<Array<TIdentityGeoJSONFeature>>,
-    encode?(geojson: GeoJSON.FeatureCollection): string | Blob
+    encode?(geojson: GeoJSON.FeatureCollection): Promise<string | Blob>
 }> = [{
     extension: ".geojson",
     description: "geojson",
@@ -27,7 +28,7 @@ const FileProcesses: Array<{
         return appendId(geojson).features as any;
     },
 
-    encode(geojson) {
+    async encode(geojson) {
         return JSON.stringify(geojson, null, 4);
     }
 }, {
@@ -36,8 +37,14 @@ const FileProcesses: Array<{
     contentType: "application/x-zip-compressed",
     async decode(file) {
         const buffer = await file.arrayBuffer();
-        const geojson = await shp(buffer) as GeoJSON.FeatureCollection;
+        const geojson = await shpReader(buffer) as GeoJSON.FeatureCollection;
         return appendId(geojson).features as any;
+    },
+    async encode(geojson) {
+        return (await shpWriter.zip(geojson, {
+            'outputType': 'blob',
+            'compression': 'DEFLATE'
+        })) as Blob;
     }
 }]
 

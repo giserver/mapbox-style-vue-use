@@ -1,69 +1,61 @@
 <template>
-    <div class="measure-control">
-        <fieldset>
-            <legend>
-                <div class="form-check">
-                    <label class="form-check-label" for="ck-measure">测量</label>
-                    <input id="ck-measure" type="checkbox" v-model="measureEnable">
-                </div>
-            </legend>
+    <ExtendPannel title="测量" position="top-left" :onToggle="handleToggle">
+        <div class="measure-properties">
+            <RadioButton class="measure-properties-tabs" :radios="tabs" v-model:value="currentTab"></RadioButton>
 
-            <div class="measure-properties">
-                <RadioButton class="measure-properties-tabs" :radios="tabs" v-model:value="currentTab"></RadioButton>
-
-                <div class="measure-properties-controls visible" v-show="currentTab === 'visible'">
-                    <div>面线段方向</div>
-                    <input type="checkbox" v-model="direction">
-                    <div>面线距离</div>
-                    <input type="checkbox" v-model="polygonLine">
-                    <div>面线段距离</div>
-                    <input type="checkbox" v-model="polygonLineSegment">
-                    <div>线段距离</div>
-                    <input type="checkbox" v-model="lineSegment">
-                </div>
-
-                <div class="measure-properties-controls" v-show="currentTab === 'units'">
-                    <div>
-                        面积
-                    </div>
-                    <select v-model="areaUnit">
-                        <option value="M2">平方米</option>
-                        <option value="KM2">平方千米</option>
-                        <option value="MU">亩</option>
-                        <option value="M2KM2">自动</option>
-                    </select>
-
-                    <div>
-                        长度
-                    </div>
-                    <select v-model="lengthUnit">
-                        <option value="M">米</option>
-                        <option value="KM">千米</option>
-                        <option value="MKM">自动</option>
-                    </select>
-                </div>
-
-                <div class="measure-properties-controls precision" v-show="currentTab === 'precision'">
-                    <div>米</div>
-                    <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[0]" :min="0" step="1">
-                    <div>千米</div>
-                    <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[1]" :min="0" step="1">
-                    <div>平方米</div>
-                    <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[2]" :min="0" step="1">
-                    <div> 平方千米</div>
-                    <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[3]" :min="0" step="1">
-                    <div>亩</div>
-                    <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[4]" :min="0" step="1">
-                </div>
+            <div class="measure-properties-controls visible" v-show="currentTab === 'visible'">
+                <div>面线段方向</div>
+                <input type="checkbox" v-model="direction">
+                <div>面线距离</div>
+                <input type="checkbox" v-model="polygonLine">
+                <div>面线段距离</div>
+                <input type="checkbox" v-model="polygonLineSegment">
+                <div>线段距离</div>
+                <input type="checkbox" v-model="lineSegment">
             </div>
-        </fieldset>
-    </div>
+
+            <div class="measure-properties-controls" v-show="currentTab === 'units'">
+                <div>
+                    面积
+                </div>
+                <select v-model="areaUnit">
+                    <option value="M2">平方米</option>
+                    <option value="KM2">平方千米</option>
+                    <option value="MU">亩</option>
+                    <option value="M2KM2">自动</option>
+                </select>
+
+                <div>
+                    长度
+                </div>
+                <select v-model="lengthUnit">
+                    <option value="M">米</option>
+                    <option value="KM">千米</option>
+                    <option value="MKM">自动</option>
+                </select>
+            </div>
+
+            <div class="measure-properties-controls precision" v-show="currentTab === 'precision'">
+                <div>米</div>
+                <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[0]" :min="0" step="1">
+                <div>千米</div>
+                <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[1]" :min="0" step="1">
+                <div>平方米</div>
+                <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[2]" :min="0" step="1">
+                <div> 平方千米</div>
+                <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[3]" :min="0" step="1">
+                <div>亩</div>
+                <input type="number" @keydown="e => e.preventDefault()" v-model="precisions[4]" :min="0" step="1">
+            </div>
+        </div>
+    </ExtendPannel>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { MeasureManager, Units } from '../../../../packages/maplugin-core';
 import RadioButton from '../base/RadioButton.vue';
+import ExtendPannel from '../base/ExtendPannel.vue';
 
 const tabs: Record<"visible" | "units" | "precision", string> = {
     'visible': "显示",
@@ -79,10 +71,10 @@ const props = defineProps<{
 props.measureManager.setVisible(false);
 props.measureManager.setDirectionSymbol('>', '<')
 
-const measureEnable = ref(false);
-watch(measureEnable, a => {
-    props.measureManager.setVisible(a);
-});
+
+function handleToggle(active: boolean) {
+    props.measureManager.setVisible(active);
+}
 
 const direction = ref(true);
 watch(direction, a => {
@@ -130,14 +122,6 @@ watch(precisions, a => {
 </script>
 
 <style scoped>
-.measure-control {
-    background: var(--color-bg);
-    color: var(--color-word);
-    font-size: var(--size-word);
-    padding: 8px;
-    border-radius: 6px;
-    width: 200px;
-}
 
 .form-check {
     display: flex;
@@ -156,6 +140,8 @@ watch(precisions, a => {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 146px;
+    color: var(--color-word);
 }
 
 .measure-properties-tabs {

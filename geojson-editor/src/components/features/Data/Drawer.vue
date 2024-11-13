@@ -7,8 +7,8 @@
 </template>
 
 <script lang="ts" setup>
-import RadioButton from '../base/RadioButton.vue';
-import { DrawManager, TDrawGeometryType } from '../../../../packages/maplugin-core';
+import RadioButton from '../../base/RadioButton.vue';
+import { DrawManager, TDrawGeometryType } from '../../../../../packages/maplugin-maplibre';
 import { ref, watch } from 'vue';
 
 const radios: Record<TDrawGeometryType, string> = {

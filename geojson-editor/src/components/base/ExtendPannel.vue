@@ -47,11 +47,12 @@ function onToggleWrap(active: boolean) {
     border-radius: 6px;
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
-
+    pointer-events: none;
 }
 
 .extend-pannel-content.active {
     opacity: 1;
+    pointer-events: auto;
 }
 
 .top-left {

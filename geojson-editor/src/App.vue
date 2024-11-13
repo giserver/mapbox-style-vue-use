@@ -114,24 +114,35 @@ function handleMapLoaded(map: maplibregl.Map) {
         drawManager,
         onUpload: (features: Array<TIdentityGeoJSONFeature>) => glManager.add(...features),
         onDownload: () => glManager.fc
-    }, "top-left");
+    }, "top-center");
     createMapControl(map, Measurer, { measureManager }, 'top-left');
 }
 
-function createMapControl(map: maplibregl.Map, component: Component, data?: Record<string, unknown>, position: maplibregl.ControlPosition = 'top-right') {
+function createMapControl(map: maplibregl.Map, component: Component, data?: Record<string, unknown>, position: maplibregl.ControlPosition | "top-center" | "bottom-center" = 'top-right') {
     const div = document.createElement('div');
     div.classList.add("maplibregl-ctrl");
-
     createApp(component, data).mount(div);
 
-    map.addControl({
-        onAdd() {
-            return div;
-        },
-        onRemove() {
-            div.remove();
+    if (position !== 'top-center' && position !== "bottom-center")
+        map.addControl({
+            onAdd() {
+                return div;
+            },
+            onRemove() {
+                div.remove();
+            }
+        }, position);
+
+    else{
+        let container = document.querySelector(`.maplibregl-ctrl-${position}`);
+        if(!container){
+            container = document.createElement('div');
+            container.classList.add(`maplibregl-ctrl-${position}`);
+            map._controlContainer.append(container);
         }
-    }, position);
+
+        container.append(div);
+    }
 }
 </script>
 

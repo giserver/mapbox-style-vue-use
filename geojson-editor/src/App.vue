@@ -8,12 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { Component, createApp, h, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { createMapControl, createMapPopup } from './utils';
+
 import Map from '../../packages/maplugin-maplibre/demo/Map.vue';
 import Measurer from './components/features/Measurer.vue';
 import FeatureCollectionEditor from './components/features/FeatureCollectionEditor.vue';
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 import Data from './components/features/Data/Data.vue';
+import ToggleButton from './components/base/ToggleButton.vue';
 
 import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor, useCamera } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
@@ -93,19 +96,21 @@ function handleMapLoaded(map: maplibregl.Map) {
         drawManager.id_layer_line,
         drawManager.id_layer_line_circle,
         drawManager.id_layer_point,
-        drawManager.id_layer_point_symbol], ({ features }) => {
+        drawManager.id_layer_point_symbol], ({ features , lngLat}) => {
             if (drawManager.drawing || !features || features.length === 0) return;
             const f = glManager.query((features[0].properties as any)['id']);
             if (f) {
-                glManager.setFeatureHidden(f.properties.id);
+                // glManager.setFeatureHidden(f.properties.id);
 
-                vertexEditor.setFeature(f, (id, g) => {
-                    glManager.clearFeatureHidden(id);
+                // vertexEditor.setFeature(f, (id, g) => {
+                //     glManager.clearFeatureHidden(id);
 
-                    const featrue = glManager.query(id)!;
-                    featrue.geometry = g;
-                    glManager.update(featrue);
-                });
+                //     const featrue = glManager.query(id)!;
+                //     featrue.geometry = g;
+                //     glManager.update(featrue);
+                // });
+
+                createMapPopup(map, lngLat, ToggleButton, {content:"123", defaultActive: false});
             }
         });
 
@@ -118,32 +123,7 @@ function handleMapLoaded(map: maplibregl.Map) {
     createMapControl(map, Measurer, { measureManager }, 'top-left');
 }
 
-function createMapControl(map: maplibregl.Map, component: Component, data?: Record<string, unknown>, position: maplibregl.ControlPosition | "top-center" | "bottom-center" = 'top-right') {
-    const div = document.createElement('div');
-    div.classList.add("maplibregl-ctrl");
-    createApp(component, data).mount(div);
 
-    if (position !== 'top-center' && position !== "bottom-center")
-        map.addControl({
-            onAdd() {
-                return div;
-            },
-            onRemove() {
-                div.remove();
-            }
-        }, position);
-
-    else{
-        let container = document.querySelector(`.maplibregl-ctrl-${position}`);
-        if(!container){
-            container = document.createElement('div');
-            container.classList.add(`maplibregl-ctrl-${position}`);
-            map._controlContainer.append(container);
-        }
-
-        container.append(div);
-    }
-}
 </script>
 
 <style scoped>

@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { TIdentityGeoJSONFeature } from '../../../../../packages/maplugin-core';
-import FileProcesses from '../../../services/file-processes';
+import { FileProcesses } from '../../../utils';
 
 const props = defineProps<{
     onUpload(features: Array<TIdentityGeoJSONFeature>): void,

@@ -12,7 +12,7 @@ function appendId(fc: GeoJSON.FeatureCollection) {
     return fc;
 }
 
-const FileProcesses: Array<{
+export const FileProcesses: Array<{
     extension: string,
     description: string,
     contentType: string
@@ -46,6 +46,4 @@ const FileProcesses: Array<{
             'compression': 'DEFLATE'
         })) as Blob;
     }
-}]
-
-export default FileProcesses;
+}];

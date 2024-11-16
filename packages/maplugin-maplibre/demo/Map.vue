@@ -21,8 +21,8 @@ onMounted(() => {
     style: props.style,
     attributionControl: false
   });
-  map.addControl(new maplibregl.NavigationControl(),'bottom-right');
-  map.addControl(new maplibregl.ScaleControl(),'bottom-left');
+  map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+  map.addControl(new maplibregl.ScaleControl(), 'bottom-left');
   map.on('load', () => {
     props.onMapLoad(map);
   });

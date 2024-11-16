@@ -50,13 +50,39 @@ export type TMapEvent =
     "styleimagemissing" |
     "style.load";
 
+export interface LngLat {
+    lng: number;
+    lat: number;
+    wrap(): LngLat;
+    toArray(): [
+        number,
+        number
+    ];
+    toArray(): [
+        number,
+        number
+    ];
+    distanceTo(lngLat: LngLat): number;
+}
+
+export type LngLatLike = LngLat | {
+    lng: number;
+    lat: number;
+} | {
+    lon: number;
+    lat: number;
+} | [
+    number,
+    number
+];
+
 export interface IMap {
     getContainer(): HTMLElement,
 
     getStyle(): any;
     setStyle(style: string): any;
-    setCenter(center: [number, number]): void;
-    getCenter(): { lng: number, lat: number };
+    setCenter(center: LngLatLike): void;
+    getCenter(): LngLat;
     setBearing(bearing: number): void;
     getBearing(): number;
     setPitch(pitch: number): void;
@@ -64,7 +90,7 @@ export interface IMap {
     getZoom(): number,
     setZoom(zoom: number): void,
 
-    easeTo(options: { center?: [number, number], zoom?: number, duration?: number }): void,
+    easeTo(options: { center?: LngLatLike, zoom?: number, duration?: number }): void,
 
     getCanvas(): HTMLCanvasElement,
 

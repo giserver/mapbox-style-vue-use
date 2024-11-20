@@ -17,6 +17,7 @@ import FeatureCollectionEditor from './components/features/FeatureCollectionEdit
 import ShowEditorButton from './components/features/ShowEditorButton.vue';
 import Data from './components/features/Data/Data.vue';
 import ToggleButton from './components/base/ToggleButton.vue';
+import DataDetail from './components/features/DataDetail.vue';
 
 import { DrawManager, GeoJSONLayerManager, MeasureManager, TIdentityGeoJSONFeature, MiddleButtonRoate, VertexEditor, useCamera } from '../../packages/maplugin-maplibre';
 import { StoreEditor } from './stores';
@@ -68,7 +69,42 @@ function handleMapLoaded(map: maplibregl.Map) {
     // 中键旋转
     new MiddleButtonRoate(map);
 
-    const glManager = new GeoJSONLayerManager(map, new Array<TIdentityGeoJSONFeature>());
+    const glManager = new GeoJSONLayerManager<TIdentityGeoJSONFeature>(map, [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            121.20015593197513,
+                            31.646326873778108
+                        ],
+                        [
+                            121.21262716876038,
+                            31.636886722815902
+                        ],
+                        [
+                            121.22128404677903,
+                            31.644328677177043
+                        ],
+                        [
+                            121.20797723212729,
+                            31.654153282119196
+                        ],
+                        [
+                            121.20015593197513,
+                            31.646326873778108
+                        ]
+                    ]
+                ]
+            },
+            "properties": {
+                "id": "09cd7939-9a47-4318-aeeb-64b8f2ed7ff4"
+            }
+        }
+    ]);
+
     glManager.on('all', () => {
         fc.value = glManager.fc;
     });
@@ -96,21 +132,32 @@ function handleMapLoaded(map: maplibregl.Map) {
         drawManager.id_layer_line,
         drawManager.id_layer_line_circle,
         drawManager.id_layer_point,
-        drawManager.id_layer_point_symbol], ({ features , lngLat}) => {
+        drawManager.id_layer_point_symbol], ({ features, lngLat }) => {
             if (drawManager.drawing || !features || features.length === 0) return;
             const f = glManager.query((features[0].properties as any)['id']);
             if (f) {
-                // glManager.setFeatureHidden(f.properties.id);
+                const popup = createMapPopup(map, lngLat, DataDetail, {
+                    featrue: f,
+                    onDelete() {
+                        glManager.delete(f);
+                        popup.remove();
+                    },
+                    onEdit() {
+                        glManager.setFeatureHidden(f.properties.id);
 
-                // vertexEditor.setFeature(f, (id, g) => {
-                //     glManager.clearFeatureHidden(id);
+                        vertexEditor.setFeature(f, (id, g) => {
+                            glManager.clearFeatureHidden(id);
 
-                //     const featrue = glManager.query(id)!;
-                //     featrue.geometry = g;
-                //     glManager.update(featrue);
-                // });
-
-                createMapPopup(map, lngLat, ToggleButton, {content:"123", defaultActive: false});
+                            const featrue = glManager.query(id)!;
+                            featrue.geometry = g;
+                            glManager.update(featrue);
+                        });
+                        popup.remove();
+                    },
+                    onCopy() {
+                        popup.remove();
+                    }
+                });
             }
         });
 

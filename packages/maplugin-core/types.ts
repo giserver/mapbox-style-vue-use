@@ -48,7 +48,8 @@ export type TMapEvent =
     "styledataloading" |
     "sourcedataloading" |
     "styleimagemissing" |
-    "style.load";
+    "style.load" | 
+    "draw.selectionchange";
 
 export interface LngLat {
     lng: number;

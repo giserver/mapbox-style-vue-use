@@ -9,9 +9,16 @@ export default defineConfig({
       name: 'maplugin',
       fileName: 'index',
     },
-    rollupOptions:{
-      external: ['vue', 'maplibre-gl', 'mapbox-gl', '@turf/center', 'proj4', '@maplugin-vue/core']
+    rollupOptions: {
+      external: [
+        'vue', 
+        'maplibre-gl', 
+        'mapbox-gl', 
+        'proj4', 
+        '@mapbox/mapbox-gl-draw',
+        '@turf/boolean-clockwise',
+        '@turf/center']
     }
   },
-  plugins: [vue(), dts()]
+  plugins: [vue(), dts({ include: ['../maplugin-core', "./"], exclude: ['demo'] })]
 })
